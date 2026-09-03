@@ -38,13 +38,14 @@ def state(s):
 
 STATE_CLASS = {"done": "ok", "notdone": "off", "active": "warn", "open": "acc"}
 STATE_LABEL = {"done": "Closed · Done", "notdone": "Closed · not done", "active": "Review or Waiting", "open": "New or Backlog"}
-FEATURE_CLASS = {"shipped": "ok", "in progress": "warn", "todo": "acc", "refinement": "off"}
+FEATURE_CLASS = {"shipped": "ok", "in progress": "warn", "todo": "acc", "won't do": "off", "refinement": "ring"}
 
 
 def feature_status(f):
     """shipped: every story done, nothing open. in progress: something done or active and
     something still open, or an open PR. todo: stories filed, none done or started.
-    refinement: nothing done and nothing planned."""
+    won't do: nothing done, nothing open, every story closed without work.
+    refinement: no story filed yet."""
     if f["status_override"]:
         return f["status_override"]
     states = {state(x) for x in stories if x["feature"] == f["id"]}
@@ -55,13 +56,15 @@ def feature_status(f):
         return "in progress"
     if "open" in states:
         return "todo"
+    if "notdone" in states:
+        return "won't do"
     return "refinement"
 
 
 def status_sentence():
     c = status_counts()
     words = {"shipped": "shipped with nothing open", "in progress": "in progress",
-             "todo": "filed with nothing started", "refinement": "in refinement"}
+             "todo": "filed with nothing started", "won't do": "closed won't do", "refinement": "in refinement"}
     parts = [f'{n} {"is" if n == 1 else "are"} {words[k]}' for k, n in c.items() if n]
     if len(parts) > 1:
         parts[-1] = "and " + parts[-1]
@@ -197,7 +200,7 @@ def fig_pipeline():
 
 
 def status_counts():
-    c = {"shipped": 0, "in progress": 0, "todo": 0, "refinement": 0}
+    c = {"shipped": 0, "in progress": 0, "todo": 0, "won't do": 0, "refinement": 0}
     for f in features:
         c[feature_status(f)] += 1
     return c
@@ -232,17 +235,18 @@ def fig_layers():
             y += 18
     height = y + 4
     counts = status_counts()
-    ARIA_COUNTS = f'{counts["shipped"]} shipped, {counts["in progress"]} in progress, {counts["todo"]} todo, {counts["refinement"]} in refinement.'
+    ARIA_COUNTS = f'{counts["shipped"]} shipped, {counts["in progress"]} in progress, {counts["todo"]} todo, {counts["won\'t do"]} won\'t do, {counts["refinement"]} in refinement.'
     return f'''<figure>
   <div class="figwrap">
-    <svg viewBox="0 0 {width} {height}" role="img" aria-label="Seven layers, each holding its features as boxes coloured by status. Green is shipped, amber is in progress, blue is todo, grey dashed is refinement. {ARIA_COUNTS}">{"".join(parts)}</svg>
+    <svg viewBox="0 0 {width} {height}" role="img" aria-label="Seven layers, each holding its features as boxes coloured by status. Green is shipped, amber is in progress, blue is todo, grey dashed is won\'t do, outline only is refinement. {ARIA_COUNTS}">{"".join(parts)}</svg>
   </div>
   <figcaption><b>Figure 2. The feature map.</b> Fifteen features in seven layers. A layer is a question a reader asks in order: does it convert, does the Build have what it needs on the target, does the tool admit what it lost, can it run twice, is it proven, is it explained, can the team build it fast. Colour is the status on {SNAPSHOT}. I set it from the story map in section 4 and the code on main.{ref("src-epic-p4", "src-readme")}</figcaption>
   <div class="legend">
     <span class="l-ok">shipped</span>
     <span class="l-warn">in progress</span>
     <span class="l-acc">todo</span>
-    <span class="l-off">refinement</span>
+    <span class="l-off">won't do</span>
+    <span class="l-ring">refinement</span>
   </div>
 </figure>'''
 
@@ -391,6 +395,7 @@ tr[hidden] { display: none; }
 ul.cell { margin: 0; padding-left: 1.1rem; max-width: none; }
 ul.cell li { margin: 0.15rem 0; }
 .legend .l-acc::before { background: var(--accent-soft); border-color: var(--accent); }
+.legend .l-ring::before { background: none; border-color: var(--line); }
 .nowrap { white-space: nowrap; }
 #features td.k { white-space: normal; min-width: 14ch; }
 #features td:nth-child(2) { min-width: 26ch; }
@@ -488,7 +493,7 @@ TEMPLATE = """<!doctype html>
 
 <section id="s2">
   <h2>2. The feature map</h2>
-  <p>Fifteen features, grouped into seven layers. The layers are the questions a reader asks in order, and the colour is where each feature stands today. Status follows the stories. Shipped means every story is done and nothing is open. In progress means some of it has landed or is being worked and something is still open, or a pull request is open. Todo means stories are filed and none is done or started. Refinement means nothing is done and nothing is planned.</p>
+  <p>Fifteen features, grouped into seven layers. The layers are the questions a reader asks in order, and the colour is where each feature stands today. Status follows the stories. Shipped means every story is done and nothing is open. In progress means some of it has landed or is being worked and something is still open, or a pull request is open. Todo means stories are filed and none is done or started. Won't do means every story closed without work. Refinement means no story is filed yet.</p>
   @@FIG2@@
   @@FEATURES@@
 </section>

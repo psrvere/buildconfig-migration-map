@@ -37,7 +37,7 @@ when you refresh the Jira statuses.
 - A feature's status is derived from its stories. Shipped: every story
   done, nothing open. In progress: something done or active and something
   still open, or an open PR (set `status_override` for PR-only work). Todo:
-  stories filed, none done or started. Refinement: nothing done and nothing
-  planned.
+  stories filed, none done or started. Won't do: every story closed without
+  work. Refinement: no story filed yet.
 - Prose follows the create-html writing rules: no em dashes, one idea per
   sentence, every factual claim cites a source in the list at the end.
