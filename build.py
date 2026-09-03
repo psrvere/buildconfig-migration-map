@@ -87,6 +87,7 @@ SOURCES = [
     ("src-epic-p3", "BUILD-2254, Migration Tool Enhancement: Phase 3, Jira epic", JIRA + "BUILD-2254"),
     ("src-epic-p4", "BUILD-2394, Enhancement to Migration Tool, Phase 4, Jira epic", JIRA + "BUILD-2394"),
     ("src-readme", "crane-plugin-buildconfig-to-shipwright, README on main", PLUGIN + "/blob/main/README.md"),
+    ("src-adr1", "ADR-0001, the plugin works offline and never calls a cluster, decided 2026-08-11 with PR #1", PLUGIN + "/blob/main/docs/adr/0001-offline-conversion-no-cluster-calls.md"),
     ("src-arch", "docs/architecture.md on main, merged from PR #64 on 2026-09-03", PLUGIN + "/blob/main/docs/architecture.md"),
     ("src-matrix", "docs/support-matrix.md on main, merged from PR #65 on 2026-09-03", PLUGIN + "/blob/main/docs/support-matrix.md"),
     ("src-converter", "buildconfig/converter.go at b05b610, lines 592 to 599, the three S2I RFE warnings", PLUGIN + "/blob/b05b610/buildconfig/converter.go#L592-L599"),
@@ -480,7 +481,7 @@ TEMPLATE = """<!doctype html>
 
 <section id="s1">
   <h2>1. What the tool does</h2>
-  <p>crane exports a namespace from the source cluster to disk.@@R_CRANE@@ The plugin runs once per exported object. For each BuildConfig it marks the original for deletion and emits a Shipwright Build, plus a ServiceAccount, a ConfigMap or a BuildRun template when the BuildConfig needs one.@@R_README@@ It never contacts a cluster. ImageStream references resolve through two mapping flags. When no flag matches, the plugin falls back to the internal registry URL and says so in a warning.@@R_README@@</p>
+  <p>crane exports a namespace from the source cluster to disk.@@R_CRANE@@ The plugin runs once per exported object. For each BuildConfig it marks the original for deletion and emits a Shipwright Build, plus a ServiceAccount, a ConfigMap or a BuildRun template when the BuildConfig needs one.@@R_README@@ It never contacts a cluster, a rule decided on 2026-08-11 with PR #1 and recorded as ADR-0001.@@R_ADR1@@ ImageStream references resolve through two mapping flags. When no flag matches, the plugin falls back to the internal registry URL and says so in a warning.@@R_README@@</p>
   @@FIG1@@
   <p>Every field the plugin drops or changes lands as a warning in an annotation on the Build. Each BuildConfig ends in one of four recorded outcomes: converted, converted with warnings, skipped, or failed. The plugin skips Custom and JenkinsPipeline strategies and records why. One BuildConfig that cannot convert never aborts the run.@@R_ARCH@@ The enhancement proposal that started this work described a different shape, a live <code>crane convert</code> against the cluster. The offline plugin replaced it.@@R_ENH@@</p>
 </section>
@@ -585,6 +586,7 @@ page = (TEMPLATE
         .replace("@@FILTERS@@", filter_bar()).replace("@@STORIES@@", story_table())
         .replace("@@TALLY@@", tally_table())
         .replace("@@R_README@@", ref("src-readme")).replace("@@R_PRS@@", ref("src-prs"))
+        .replace("@@R_ADR1@@", ref("src-adr1"))
         .replace("@@R_EPICS@@", ref("src-epic-tp", "src-epic-p1", "src-epic-p2", "src-epic-p3", "src-epic-p4"))
         .replace("@@R_P4@@", ref("src-epic-p4")).replace("@@R_TP@@", ref("src-epic-tp"))
         .replace("@@R_CRANE@@", ref("src-crane")).replace("@@R_ARCH@@", ref("src-arch"))
