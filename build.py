@@ -42,18 +42,30 @@ FEATURE_CLASS = {"shipped": "ok", "in progress": "warn", "todo": "acc", "refinem
 
 
 def feature_status(f):
-    """shipped: nothing open. in progress: a story in Review, In Progress or Waiting, or an open PR.
-    todo: open stories, none started. refinement: nothing shipped and nothing planned."""
+    """shipped: every story done, nothing open. in progress: something done or active and
+    something still open, or an open PR. todo: stories filed, none done or started.
+    refinement: nothing done and nothing planned."""
     if f["status_override"]:
         return f["status_override"]
     states = {state(x) for x in stories if x["feature"] == f["id"]}
-    if "active" in states:
+    pending = bool(states & {"active", "open"})
+    if "done" in states and not pending:
+        return "shipped"
+    if "active" in states or ("done" in states and pending):
         return "in progress"
     if "open" in states:
         return "todo"
-    if "done" in states:
-        return "shipped"
     return "refinement"
+
+
+def status_sentence():
+    c = status_counts()
+    words = {"shipped": "shipped with nothing open", "in progress": "in progress",
+             "todo": "filed with nothing started", "refinement": "in refinement"}
+    parts = [f'{n} {"is" if n == 1 else "are"} {words[k]}' for k, n in c.items() if n]
+    if len(parts) > 1:
+        parts[-1] = "and " + parts[-1]
+    return ", ".join(parts) if len(parts) > 2 else " ".join(parts)
 
 
 def story_tag(s):
@@ -437,7 +449,7 @@ TEMPLATE = """<!doctype html>
 
 <section id="summary">
   <h2>In short</h2>
-  <p>The tool is a crane transform plugin. It reads a namespace export from disk and turns every BuildConfig into a Shipwright Build, offline, with each dropped field recorded on the object.@@R_README@@ Of the fifteen features, @@N_SHIPPED@@ are shipped with nothing open, @@N_INPROG@@ are in progress, @@N_TODO@@ have work filed but not started, and @@N_REFINE@@ is in refinement.@@R_PRS@@</p>
+  <p>The tool is a crane transform plugin. It reads a namespace export from disk and turns every BuildConfig into a Shipwright Build, offline, with each dropped field recorded on the object.@@R_README@@ Of the fifteen features, @@STATUS_SENTENCE@@.@@R_PRS@@</p>
   <p>The five epics hold @@N_ALL@@ stories. @@N_DONE@@ are done. We closed @@N_DESC@@ without building them, and @@N_OPENALL@@ are open, @@N_REV@@ of those in review or waiting.@@R_EPICS@@</p>
   <div class="callout">
     <p>Four things the epic view hides. Three S2I options are Done in Jira, and the plugin still drops them. That one bites a customer with custom S2I scripts on day one, and is now @@J2459@@. Nothing guards the parameter contract between the plugin and the operator. The plugin preserves triggers but cannot migrate them. And the test infrastructure has no Jira footprint at all.</p>
@@ -454,7 +466,7 @@ TEMPLATE = """<!doctype html>
 
 <section id="s2">
   <h2>2. The feature map</h2>
-  <p>Fifteen features, grouped into seven layers. The layers are the questions a reader asks in order, and the colour is where each feature stands today. Status follows the stories. Shipped means nothing is open. In progress means a story sits in Review, In Progress or Waiting, or a pull request is open. Todo means work is filed and nobody has started it. Refinement means nothing shipped and nothing is planned.</p>
+  <p>Fifteen features, grouped into seven layers. The layers are the questions a reader asks in order, and the colour is where each feature stands today. Status follows the stories. Shipped means every story is done and nothing is open. In progress means some of it has landed or is being worked and something is still open, or a pull request is open. Todo means stories are filed and none is done or started. Refinement means nothing is done and nothing is planned.</p>
   @@FIG2@@
   @@FEATURES@@
 </section>
@@ -546,8 +558,7 @@ page = (TEMPLATE
         .replace("@@N_ALL@@", str(n_all)).replace("@@N_DONE@@", str(n_done))
         .replace("@@N_DESC@@", str(n_desc)).replace("@@N_REV@@", str(n_rev))
         .replace("@@N_OPENALL@@", str(n_rev + n_open)).replace("@@N_ENH@@", str(n_enh))
-        .replace("@@N_SHIPPED@@", str(fc["shipped"])).replace("@@N_INPROG@@", str(fc["in progress"]))
-        .replace("@@N_TODO@@", str(fc["todo"])).replace("@@N_REFINE@@", str(fc["refinement"]))
+        .replace("@@STATUS_SENTENCE@@", status_sentence())
         .replace("@@FIG1@@", fig_pipeline()).replace("@@FIG2@@", fig_layers())
         .replace("@@FEATURES@@", features_table()).replace("@@PHASES@@", phase_table())
         .replace("@@FILTERS@@", filter_bar()).replace("@@STORIES@@", story_table())
