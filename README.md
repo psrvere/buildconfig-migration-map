@@ -19,7 +19,7 @@ python3 build.py      # writes index.html from data/*.tsv
 | File | What it holds |
 |---|---|
 | `data/stories.tsv` | one row per story: key, phase, feature, type, Jira status and resolution, title, PR numbers, gap flag, note |
-| `data/features.tsv` | the fifteen features: id, short name, name, layer, what the user gets, status class (`ok`, `warn`, `bad`, `off`), status text |
+| `data/features.tsv` | the fifteen features: id, short name, name, layer, what the user gets as pipe-separated bullets, status class (`ok`, `warn`, `bad`, `off`), one of five status labels, an optional note under the label |
 | `data/layers.tsv` | the seven layers the features sit in |
 | `build.py` | the prose sections, the two SVG figures, the sources list, and the story-table filters |
 | `assets/base.css` | the shared dark stylesheet from the create-html skill, inlined at build time |

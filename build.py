@@ -193,9 +193,9 @@ def fig_layers():
   </div>
   <figcaption><b>Figure 2. The feature map.</b> Fifteen features in seven layers. A layer is a question a reader asks in order: does it convert, does the Build have what it needs on the target, does the tool admit what it lost, can it run twice, is it proven, is it explained, can the team build it fast. Colour is the status on {SNAPSHOT}. I set it from the story map in section 4 and the code on main.{ref("src-epic-p4", "src-readme")}</figcaption>
   <div class="legend">
-    <span class="l-ok">shipped on main</span>
+    <span class="l-ok">shipped</span>
     <span class="l-warn">partly shipped or in review</span>
-    <span class="l-bad">gap the epics hide</span>
+    <span class="l-bad">gap</span>
     <span class="l-off">descoped</span>
   </div>
 </figure>'''
@@ -207,7 +207,8 @@ def features_table():
     for f in features:
         items = "".join(f"<li>{e(t.strip())}</li>" for t in f["outcome"].split("|") if t.strip())
         rows.append(f'<tr><td class="k">{e(f["id"])} {e(f["name"])}</td><td><ul class="cell">{items}</ul></td>'
-                    f'<td><span class="tag {f["status_class"]}">{e(f["status_text"])}</span></td></tr>')
+                    f'<td><span class="tag {f["status_class"]}">{e(f["status_text"])}</span>'
+                    + (f'<div class="src">{e(f["status_note"])}</div>' if f["status_note"] else "") + '</td></tr>')
     return ('<div class="tablewrap"><table><thead><tr><th>Feature</th><th>What the user gets</th><th>Status</th></tr></thead>'
             f'<tbody>{"".join(rows)}</tbody></table></div>')
 
