@@ -10,9 +10,9 @@ BUILD-1749	P1	F5	Feature	Closed	Done	RFE: Support registry pull secret in source
 BUILD-1756	P1	F2	Feature	Closed	Done	RFE: Support pushing output images to Openshift imagestreams			internal-registry output URL. The push-credential warning came with BUILD-2316
 BUILD-1580	P2	F3	Feature	Closed	Done	RFE: Support --pull=always flag in Buildah Strategy			
 BUILD-1581	P2	F3	Feature	Closed	Done	RFE: Support --squash flag in Buildah Strategy			
-BUILD-1606	P2	F4	Feature	Closed	Done	RFE: Support --force-pull flag in S2I Strategy		1	the operator has the pull-policy param, the plugin still warns
-BUILD-1607	P2	F4	Feature	Closed	Done	"RFE: Support ""--incremental"" flag in S2I Strategy"		1	the operator has the incremental param, the plugin still warns
-BUILD-1641	P2	F4	Feature	Closed	Done	RFE: Support custom scripts in Source to Image strategy		1	the operator has the scripts-url param, the plugin still warns
+BUILD-1606	P2	F4	Feature	Closed	Done	RFE: Support --force-pull flag in S2I Strategy		1	the shipped strategy has the pull-policy param, the plugin still warns
+BUILD-1607	P2	F4	Feature	Closed	Done	"RFE: Support ""--incremental"" flag in S2I Strategy"		1	the shipped strategy has the incremental param, the plugin still warns
+BUILD-1641	P2	F4	Feature	Closed	Done	RFE: Support custom scripts in Source to Image strategy		1	the shipped strategy has the scripts-url param, the plugin still warns
 BUILD-1652	P2	F6	Feature	Closed	Done	CommonSpec Misc Fields Migration			umbrella, split into BUILD-2261, 2262, 2264, 2265, 2269
 BUILD-1656	P2	F6	Spike	Closed	Done	Build Progress Types Migration			answered by the Phase 3 gap analysis
 BUILD-1726	P2	F5	Feature	Closed	Done	RFE: Support push secret in buildah strategy			native Shipwright output.pushSecret
