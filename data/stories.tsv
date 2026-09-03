@@ -1,98 +1,99 @@
-key	phase	feature	type	status	resolution	title	prs	gap	note
-BUILD-1544	TP	F1	Feature	Closed	Done	DockerBuildStrategy Type Migration			
-BUILD-1553	TP	F1	Feature	Closed	Done	SourceBuildStrategy Type Migration			
-BUILD-1575	TP	F1	Feature	Closed	Done	BuildSource Type Migration			
-BUILD-1650	TP	F8	Spike	Closed	Done	Build Trigger Spike			
-BUILD-1667	TP	F1	Demo	Closed	Done	Interim Migration Tool Demo			
-BUILD-1578	P1	F3	Feature	Closed	Done	RFE: Support --no-cache flag in Buildah Strategy			
-BUILD-1746	P1	F3	Feature	Closed	Done	"RFE: Support ""runtime-stage-from"" in Buildah ClusterBuildStrategy"			
-BUILD-1749	P1	F5	Feature	Closed	Done	RFE: Support registry pull secret in source to image cluster build strategies			handled through the generated ServiceAccount
-BUILD-1756	P1	F2	Feature	Closed	Done	RFE: Support pushing output images to Openshift imagestreams			internal-registry output URL. The push-credential warning came with BUILD-2316
-BUILD-1580	P2	F3	Feature	Closed	Done	RFE: Support --pull=always flag in Buildah Strategy			
-BUILD-1581	P2	F3	Feature	Closed	Done	RFE: Support --squash flag in Buildah Strategy			
-BUILD-1606	P2	F4	Feature	Closed	Done	RFE: Support --force-pull flag in S2I Strategy		1	the shipped strategy has the pull-policy param, the plugin still warns
-BUILD-1607	P2	F4	Feature	Closed	Done	"RFE: Support ""--incremental"" flag in S2I Strategy"		1	the shipped strategy has the incremental param, the plugin still warns
-BUILD-1641	P2	F4	Feature	Closed	Done	RFE: Support custom scripts in Source to Image strategy		1	the shipped strategy has the scripts-url param, the plugin still warns
-BUILD-1652	P2	F6	Feature	Closed	Done	CommonSpec Misc Fields Migration			umbrella, split into BUILD-2261, 2262, 2264, 2265, 2269
-BUILD-1656	P2	F6	Spike	Closed	Done	Build Progress Types Migration			answered by the Phase 3 gap analysis
-BUILD-1726	P2	F5	Feature	Closed	Done	RFE: Support push secret in buildah strategy			native Shipwright output.pushSecret
-BUILD-1743	P2	F14	Feature	Closed	Done	"RFE: Add ""omitempty"" tag in SingleValue Type in Shipwright (API Change)"			upstream API change; consumed by BUILD-2334
-BUILD-1744	P2	F5	Feature	Closed	Done	RFE: Using secrets during build process			dropped with guidance, the strategies cannot mount them
-BUILD-1745	P2	F5	Feature	Closed	Done	RFE: Use ConfigMaps during build process			same as BUILD-1744
-BUILD-1747	P2	F5	Spike	Closed	Done	RFE: Identify common Volumes used in BuildConfig for DockerStrategy and SourceStrategy			
-BUILD-1765	P2	F11	Documentation	Closed	Done	Docker to Buildah Migration with Binary Source	65		binary guidance landed in the support matrix
-BUILD-1766	P2	F11	Documentation	Closed	Done	Docker to Buildah migration with Image Source			
-BUILD-2038	P2	F5	Feature	Closed	Won't Do	RFE: Secret migration support for crane convert			crane export already migrates user secrets
-BUILD-2039	P2	F15	Feature	Closed	Won't Do	RFE: Cross-cluster warning when Shipwright/Tekton not found on destination			
-BUILD-2329	P2	F14	Chore	Closed	Done	Bump shipwright-io/build to v0.20.11 in crane-plugin-buildconfig-to-shipwright (plugin-only)	6		
-BUILD-2330	P2	F14	Chore	Closed	Done	Crane repo go.mod hygiene: drop committed replace, re-pin post-wave, regen help, doc-vs-behavior CI			
-BUILD-2331	P2	F12	Chore	Closed	Won't Do	Restack & rebase chore: sync mains, rebase fdff8c6-based branches, restack 2264/2269 onto fixed 2261, rebase operator 1606			
-BUILD-2335	P2	F9	Feature	Closed	Done	Generated-name DNS-1123 validation + cross-BC collision detection	7		
-BUILD-2336	P2	F1	Chore	Closed	Done	Track crane convert-plugin port (fd0c7ea branch)			closed as obsolete, the plugin repo supersedes the port
-BUILD-2337	P2	F9	Feature	Closed	Obsolete	Dry-run mode + rollback/coexistence runbook			the transform step is the dry-run
-BUILD-2338	P2	F8	Feature	Closed	Obsolete	Webhook trigger-secret export + SCM re-registration runbook			crane export covers the secrets, the runbook folded into BUILD-2257 and 2393
-BUILD-2339	P2	F9	Feature	Closed	Done	Re-run idempotency: deterministic output, safe re-convert	9		
-BUILD-2255	P3	F6	Feature	Closed	Done	Copy BuildConfig metadata labels to generated Shipwright Build	12		
-BUILD-2256	P3	F6	Feature	Closed	Done	Copy BuildConfig metadata annotations to generated Shipwright Build with filtering	14		
-BUILD-2257	P3	F8	Feature	Closed	Done	Warn per trigger type when BuildConfig triggers are dropped during migration	19		
-BUILD-2258	P3	F7	Feature	Closed	Done	Warn when BuildConfig runPolicy is dropped during migration	24		
-BUILD-2259	P3	F6	Feature	Closed	Done	Map successfulBuildsHistoryLimit to Shipwright Build spec.retention.succeededLimit	26		
-BUILD-2260	P3	F6	Feature	Closed	Done	Map failedBuildsHistoryLimit to Shipwright Build spec.retention.failedLimit	35		
-BUILD-2261	P3	F6	Feature	Closed	Done	Generate BuildRun template with resource requirements from BuildConfig	15		
-BUILD-2262	P3	F7	Feature	Closed	Done	Warn when BuildConfig postCommit hooks are dropped during migration	25		
-BUILD-2263	P3	F6	Feature	Closed	Done	Map BuildConfig completionDeadlineSeconds to Shipwright Build timeout	8		
-BUILD-2264	P3	F6	Feature	Closed	Done	Map BuildConfig nodeSelector to Shipwright Build spec.nodeSelector	38		
-BUILD-2267	P3	F6	Feature	Closed	Done	Map BuildConfig output imageLabels to Shipwright Build output labels	10		
-BUILD-2268	P3	F7	Improvement	Closed	Done	Replace fmt.Println with proper error logging for unsupported strategy types (Custom, JenkinsPipeline)			
-BUILD-2269	P3	F5	Feature	Closed	Done	Warn that the ServiceAccount's secrets and permissions must exist on the new cluster	32		
-BUILD-2270	P3	F1	Bug	Closed	Done	Fix nil pointer panic in processOutput when BuildConfig has no output	11		
-BUILD-2271	P3	F1	Bug	Closed	Done	Fix inverted Binary AsFile logic in source processing	13		
-BUILD-2272	P3	F2	Bug	Closed	Done	Fix InsecureRegistries bug using wrong data source in addRegistries			
-BUILD-2273	P3	F5	Bug	Closed	Done	Wire up dead volume processing code for Docker and Source strategies	16		
-BUILD-2274	P3	F3	Feature	Closed	Done	Map ConfigMap/Secret-backed BuildArgs to Shipwright param refs; warn+skip unmappable ValueFrom variants	22		
-BUILD-2275	P3	F7	Feature	Closed	Done	Warn when inline Dockerfile is present on Source strategy BuildConfig	37		
-BUILD-2279	P3	F6	Spike	Closed	Done	Spike: Exhaustive gap analysis of BuildConfig field coverage for Phase 3			
-BUILD-2305	P3	F13	Spike	Closed	Duplicate	Spike: Validate strategy param compatibility during crane convert			duplicate of BUILD-2317
-BUILD-2311	P3	F1	Test	Closed	Done	Add negative-case unit tests for BuildConfig source.images conversion	47		
-BUILD-2314	P3	F6	Feature	Closed	Won't Do	Always emit a BuildRun template for every converted Build			BUILD-2261 emits the template only when it has something to carry
-BUILD-2316	P3	F5	Feature	Closed	Done	Handle image push credentials explicitly (warn when no push secret can be determined)	50		
-BUILD-2317	P3	F13	Feature	Closed	Won't Do	Validate strategy parameter names against ClusterBuildStrategy definitions	58		PR #58 closed, the drift check belongs in cluster E2E
-BUILD-2318	P3	F7	Feature	Closed	Done	Don't let one bad BuildConfig abort the whole migration; track each one's outcome	36		
-BUILD-2319	P3	F7	Bug	Closed	Done	Migrated output misreports what each BuildConfig lost during conversion	57		
-BUILD-2322	P3	F13	Bug	Closed	Cannot Reproduce	Fix S2I builder-image strategy param contract and retest on cluster			
-BUILD-2323	P3	F13	Chore	Closed	Done	Operator strategy-param PRs with paired-merge enforcement (incl. scripts-url for BUILD-1641)	op1402		params landed through strategy-catalog and the operator sync
-BUILD-2324	P3	F5	Improvement	Closed	Done	Converted Build volumes: warn accurately about Shipwright UndefinedVolume rejection + emit exact strategy remediation	21		
-BUILD-2325	P3	F5	Test	Closed	Done	Volume tests and registry-list sanitizing for the migration plugin (unit + transform e2e)	56		
-BUILD-2327	P3	F7	Test	Closed	Done	Unit-test backfill for shipped warn/mapping behaviors in crane-lib ./convert			crane-lib, the legacy converter
-BUILD-2328	P3	F13	Test	Closed	Won't Do	Shared param-name constants + cross-repo golden test for strategy params			
-BUILD-2332	P3	F10	Chore	Closed	Won't Do	Require CI to pass and branches to be up to date before merging			
-BUILD-2333	P3	F12	Chore	Closed	Won't Do	Audit hygiene chore: evidence correction/backfill + doc re-baseline + tooling hardening			
-BUILD-2340	P3	F6	Improvement	Closed	Done	Source/field edge-case sweep	51		
-BUILD-2392	P3	F8	Feature	Closed	Done	Preserve original BuildConfig triggers as an annotation on the converted Build	20		
-BUILD-1764	P4	F11	Improvement	New		Add help message in crane CLI			
-BUILD-1950	P4	F11	Documentation	Backlog		Write blog post: Migrating RHEL entitled builds from BuildConfig to Shipwright Build			
-BUILD-2265	P4	F5	Feature	Review		Map mountTrustedCA to the trusted-ca volume override in converted Builds	23		PR open
-BUILD-2266	P4	F11	Documentation	Closed	Done	Add BuildConfig → Shipwright field mapping reference to plugin docs			no field-mapping.md on main, the support matrix in BUILD-2432 covers the scope
-BUILD-2315	P4	F5	Bug	Review		Stop emitting a ServiceAccount that overwrites a migrated one when a BuildConfig names its own SA	55		PR merged 2026-08-25, Jira still open
-BUILD-2326	P4	F2	Feature	New		Preserve symbolic image refs and express run-ordering for chained BuildConfig conversions			
-BUILD-2334	P4	F14	Improvement	Waiting		Crane: consume Shipwright omitempty (version bump + null-field cleanup redesign)			waits on Shipwright v0.21.0
-BUILD-2341	P4	F11	Documentation	New		Migration docs pack			binary and Custom-strategy parts landed in the support matrix
-BUILD-2342	P4	F5	Feature	Review		Trusted-CA overridable volume in shipped buildah/s2i strategies			operator and strategy-catalog side
-BUILD-2393	P4	F8	Documentation	New		Runbook: how to trigger builds after migration (per BuildConfig trigger type)			
-BUILD-2395	P4	F12	Chore	Closed	Done	Add the tech-design and setup-repos skills to the migration plugin repo	27		
-BUILD-2396	P4	F12	Chore	Closed	Done	Add a deep-review skill for automated pull request review	28		
-BUILD-2397	P4	F12	Chore	Closed	Done	Add the tech-implement skill to the migration plugin repo	29		
-BUILD-2399	P4	F12	Chore	Closed	Done	Add the tech-review skill to the migration plugin repo	30		
-BUILD-2400	P4	F12	Chore	Closed	Done	Add the tech-test skill to the migration plugin repo	33		
-BUILD-2401	P4	F12	Chore	Closed	Done	Add create-pr skill to automate commits and pull requests	41		
-BUILD-2402	P4	F5	Feature	New		Migrate the BuildConfig ServiceAccount and its RBAC, not just warn about it			
-BUILD-2431	P4	F11	Documentation	Review		Architecture doc for the BuildConfig-to-Shipwright plugin (docs/architecture.md)	64		
-BUILD-2432	P4	F11	Documentation	Review		Support matrix for BuildConfig fields: what converts, what is dropped, what to do by hand (docs/support-matrix.md)	65		
-BUILD-2433	P4	F11	Documentation	Review		Worked example: Docker build pushed to an external registry (docs/examples/docker-external-registry)	66		
-BUILD-2434	P4	F11	Documentation	Review		Worked example: Source-to-Image build with an ImageStream builder (docs/examples/s2i-imagestream-builder)	67		
-BUILD-2435	P4	F11	Documentation	Review		Worked example: a lossy Docker build with pull secret, volume, resources, post-commit hook, and inline Dockerfile (docs/examples/docker-lossy)	68		
-BUILD-2436	P4	F11	Documentation	Review		README rewrite: correct the four false claims, name the crane pin, link the new docs (README.md)	69		
-BUILD-2437	P4	F11	Documentation	Review		Architecture decision records for the migration plugin (docs/adr/, eight records and an index)	70		
-BUILD-2438	P4	F9	Improvement	New		Name-collision warnings W2 and W3 cannot fire from the plugin: remove the dead branch or mark it library-only			
-BUILD-2439	P4	F5	Improvement	New		Quote the three names in the named-ServiceAccount pull-secret warning's oc command			
-BUILD-2459	P4	F4	Bug	New		Plugin drops S2I scripts, incremental and forcePull although the shipped strategy accepts them			port of the crane-lib mapping for BUILD-1606, 1607 and 1641, 1 point
+key	phase	feature	type	status	resolution	title	prs	gap	note	points
+BUILD-1544	TP	F1	Feature	Closed	Done	DockerBuildStrategy Type Migration				3
+BUILD-1553	TP	F1	Feature	Closed	Done	SourceBuildStrategy Type Migration				3
+BUILD-1575	TP	F1	Feature	Closed	Done	BuildSource Type Migration				6
+BUILD-1650	TP	F8	Spike	Closed	Done	Build Trigger Spike				5
+BUILD-1667	TP	F1	Demo	Closed	Done	Interim Migration Tool Demo				5
+BUILD-1578	P1	F3	Feature	Closed	Done	RFE: Support --no-cache flag in Buildah Strategy				2
+BUILD-1746	P1	F3	Feature	Closed	Done	"RFE: Support ""runtime-stage-from"" in Buildah ClusterBuildStrategy"				3
+BUILD-1749	P1	F5	Feature	Closed	Done	RFE: Support registry pull secret in source to image cluster build strategies			handled through the generated ServiceAccount	3
+BUILD-1756	P1	F2	Feature	Closed	Done	RFE: Support pushing output images to Openshift imagestreams			internal-registry output URL. The push-credential warning came with BUILD-2316	2
+BUILD-1580	P2	F3	Feature	Closed	Done	RFE: Support --pull=always flag in Buildah Strategy				2
+BUILD-1581	P2	F3	Feature	Closed	Done	RFE: Support --squash flag in Buildah Strategy				2
+BUILD-1606	P2	F4	Feature	Closed	Done	RFE: Support --force-pull flag in S2I Strategy		1	the shipped strategy has the pull-policy param, the plugin still warns	2
+BUILD-1607	P2	F4	Feature	Closed	Done	"RFE: Support ""--incremental"" flag in S2I Strategy"		1	the shipped strategy has the incremental param, the plugin still warns	2
+BUILD-1641	P2	F4	Feature	Closed	Done	RFE: Support custom scripts in Source to Image strategy		1	the shipped strategy has the scripts-url param, the plugin still warns	3
+BUILD-1652	P2	F6	Feature	Closed	Done	CommonSpec Misc Fields Migration			umbrella, split into BUILD-2261, 2262, 2264, 2265, 2269	6
+BUILD-1656	P2	F6	Spike	Closed	Done	Build Progress Types Migration			answered by the Phase 3 gap analysis	3
+BUILD-1726	P2	F5	Feature	Closed	Done	RFE: Support push secret in buildah strategy			native Shipwright output.pushSecret	1
+BUILD-1743	P2	F14	Feature	Closed	Done	"RFE: Add ""omitempty"" tag in SingleValue Type in Shipwright (API Change)"			upstream API change; consumed by BUILD-2334	2
+BUILD-1744	P2	F5	Feature	Closed	Done	RFE: Using secrets during build process			dropped with guidance, the strategies cannot mount them	1
+BUILD-1745	P2	F5	Feature	Closed	Done	RFE: Use ConfigMaps during build process			same as BUILD-1744	1
+BUILD-1747	P2	F5	Spike	Closed	Done	RFE: Identify common Volumes used in BuildConfig for DockerStrategy and SourceStrategy				3
+BUILD-1765	P2	F11	Documentation	Closed	Done	Docker to Buildah Migration with Binary Source	65		binary guidance landed in the support matrix	3
+BUILD-1766	P2	F11	Documentation	Closed	Done	Docker to Buildah migration with Image Source				3
+BUILD-2038	P2	F5	Feature	Closed	Won't Do	RFE: Secret migration support for crane convert			crane export already migrates user secrets	2
+BUILD-2039	P2	F15	Feature	Closed	Won't Do	RFE: Cross-cluster warning when Shipwright/Tekton not found on destination				2
+BUILD-2329	P2	F14	Chore	Closed	Done	Bump shipwright-io/build to v0.20.11 in crane-plugin-buildconfig-to-shipwright (plugin-only)	6			1
+BUILD-2330	P2	F14	Chore	Closed	Done	Crane repo go.mod hygiene: drop committed replace, re-pin post-wave, regen help, doc-vs-behavior CI				2
+BUILD-2331	P2	F12	Chore	Closed	Won't Do	Restack & rebase chore: sync mains, rebase fdff8c6-based branches, restack 2264/2269 onto fixed 2261, rebase operator 1606				2
+BUILD-2335	P2	F9	Feature	Closed	Done	Generated-name DNS-1123 validation + cross-BC collision detection	7			2
+BUILD-2336	P2	F1	Chore	Closed	Done	Track crane convert-plugin port (fd0c7ea branch)			closed as obsolete, the plugin repo supersedes the port	1
+BUILD-2337	P2	F9	Feature	Closed	Obsolete	Dry-run mode + rollback/coexistence runbook			the transform step is the dry-run	3
+BUILD-2338	P2	F8	Feature	Closed	Obsolete	Webhook trigger-secret export + SCM re-registration runbook			crane export covers the secrets, the runbook folded into BUILD-2257 and 2393	3
+BUILD-2339	P2	F9	Feature	Closed	Done	Re-run idempotency: deterministic output, safe re-convert	9			2
+BUILD-2255	P3	F6	Feature	Closed	Done	Copy BuildConfig metadata labels to generated Shipwright Build	12			2
+BUILD-2256	P3	F6	Feature	Closed	Done	Copy BuildConfig metadata annotations to generated Shipwright Build with filtering	14			2
+BUILD-2257	P3	F8	Feature	Closed	Done	Warn per trigger type when BuildConfig triggers are dropped during migration	19			2
+BUILD-2258	P3	F7	Feature	Closed	Done	Warn when BuildConfig runPolicy is dropped during migration	24			2
+BUILD-2259	P3	F6	Feature	Closed	Done	Map successfulBuildsHistoryLimit to Shipwright Build spec.retention.succeededLimit	26			2
+BUILD-2260	P3	F6	Feature	Closed	Done	Map failedBuildsHistoryLimit to Shipwright Build spec.retention.failedLimit	35			2
+BUILD-2261	P3	F6	Feature	Closed	Done	Generate BuildRun template with resource requirements from BuildConfig	15			2
+BUILD-2262	P3	F7	Feature	Closed	Done	Warn when BuildConfig postCommit hooks are dropped during migration	25			2
+BUILD-2263	P3	F6	Feature	Closed	Done	Map BuildConfig completionDeadlineSeconds to Shipwright Build timeout	8			2
+BUILD-2264	P3	F6	Feature	Closed	Done	Map BuildConfig nodeSelector to Shipwright Build spec.nodeSelector	38			2
+BUILD-2267	P3	F6	Feature	Closed	Done	Map BuildConfig output imageLabels to Shipwright Build output labels	10			2
+BUILD-2268	P3	F7	Improvement	Closed	Done	Replace fmt.Println with proper error logging for unsupported strategy types (Custom, JenkinsPipeline)				2
+BUILD-2269	P3	F5	Feature	Closed	Done	Warn that the ServiceAccount's secrets and permissions must exist on the new cluster	32			1
+BUILD-2270	P3	F1	Bug	Closed	Done	Fix nil pointer panic in processOutput when BuildConfig has no output	11			1
+BUILD-2271	P3	F1	Bug	Closed	Done	Fix inverted Binary AsFile logic in source processing	13			1
+BUILD-2272	P3	F2	Bug	Closed	Done	Fix InsecureRegistries bug using wrong data source in addRegistries				1
+BUILD-2273	P3	F5	Bug	Closed	Done	Wire up dead volume processing code for Docker and Source strategies	16			2
+BUILD-2274	P3	F3	Feature	Closed	Done	Map ConfigMap/Secret-backed BuildArgs to Shipwright param refs; warn+skip unmappable ValueFrom variants	22			2
+BUILD-2275	P3	F7	Feature	Closed	Done	Warn when inline Dockerfile is present on Source strategy BuildConfig	37			2
+BUILD-2279	P3	F6	Spike	Closed	Done	Spike: Exhaustive gap analysis of BuildConfig field coverage for Phase 3				2
+BUILD-2305	P3	F13	Spike	Closed	Duplicate	Spike: Validate strategy param compatibility during crane convert			duplicate of BUILD-2317	3
+BUILD-2311	P3	F1	Test	Closed	Done	Add negative-case unit tests for BuildConfig source.images conversion	47			1
+BUILD-2314	P3	F6	Feature	Closed	Won't Do	Always emit a BuildRun template for every converted Build			BUILD-2261 emits the template only when it has something to carry	3
+BUILD-2316	P3	F5	Feature	Closed	Done	Handle image push credentials explicitly (warn when no push secret can be determined)	50			2
+BUILD-2317	P3	F13	Feature	Closed	Won't Do	Validate strategy parameter names against ClusterBuildStrategy definitions	58		PR #58 closed, the drift check belongs in cluster E2E	3
+BUILD-2318	P3	F7	Feature	Closed	Done	Don't let one bad BuildConfig abort the whole migration; track each one's outcome	36			2
+BUILD-2319	P3	F7	Bug	Closed	Done	Migrated output misreports what each BuildConfig lost during conversion	57			2
+BUILD-2322	P3	F13	Bug	Closed	Cannot Reproduce	Fix S2I builder-image strategy param contract and retest on cluster				1
+BUILD-2323	P3	F13	Chore	Closed	Done	Operator strategy-param PRs with paired-merge enforcement (incl. scripts-url for BUILD-1641)	op1402		params landed through strategy-catalog and the operator sync	3
+BUILD-2324	P3	F5	Improvement	Closed	Done	Converted Build volumes: warn accurately about Shipwright UndefinedVolume rejection + emit exact strategy remediation	21			2
+BUILD-2325	P3	F5	Test	Closed	Done	Volume tests and registry-list sanitizing for the migration plugin (unit + transform e2e)	56			2
+BUILD-2327	P3	F7	Test	Closed	Done	Unit-test backfill for shipped warn/mapping behaviors in crane-lib ./convert			crane-lib, the legacy converter	3
+BUILD-2328	P3	F13	Test	Closed	Won't Do	Shared param-name constants + cross-repo golden test for strategy params				4
+BUILD-2332	P3	F10	Chore	Closed	Won't Do	Require CI to pass and branches to be up to date before merging				1
+BUILD-2333	P3	F12	Chore	Closed	Won't Do	Audit hygiene chore: evidence correction/backfill + doc re-baseline + tooling hardening				2
+BUILD-2340	P3	F6	Improvement	Closed	Done	Source/field edge-case sweep	51			2
+BUILD-2392	P3	F8	Feature	Closed	Done	Preserve original BuildConfig triggers as an annotation on the converted Build	20			2
+BUILD-1764	P4	F11	Improvement	New		Add help message in crane CLI				2
+BUILD-1950	P4	F11	Documentation	Backlog		Write blog post: Migrating RHEL entitled builds from BuildConfig to Shipwright Build				
+BUILD-2265	P4	F5	Feature	Review		Map mountTrustedCA to the trusted-ca volume override in converted Builds	23		PR open	2
+BUILD-2266	P4	F11	Documentation	Closed	Done	Add BuildConfig → Shipwright field mapping reference to plugin docs			no field-mapping.md on main, the support matrix in BUILD-2432 covers the scope	3
+BUILD-2315	P4	F5	Bug	Review		Stop emitting a ServiceAccount that overwrites a migrated one when a BuildConfig names its own SA	55		PR merged 2026-08-25, Jira still open	2
+BUILD-2326	P4	F2	Feature	New		Preserve symbolic image refs and express run-ordering for chained BuildConfig conversions				3
+BUILD-2334	P4	F14	Improvement	Waiting		Crane: consume Shipwright omitempty (version bump + null-field cleanup redesign)			waits on Shipwright v0.21.0	1
+BUILD-2341	P4	F11	Documentation	New		Migration docs pack			binary and Custom-strategy parts landed in the support matrix	2
+BUILD-2342	P4	F5	Feature	Review		Trusted-CA overridable volume in shipped buildah/s2i strategies			operator and strategy-catalog side	2
+BUILD-2393	P4	F8	Documentation	New		Runbook: how to trigger builds after migration (per BuildConfig trigger type)				2
+BUILD-2395	P4	F12	Chore	Closed	Done	Add the tech-design and setup-repos skills to the migration plugin repo	27			2
+BUILD-2396	P4	F12	Chore	Closed	Done	Add a deep-review skill for automated pull request review	28			2
+BUILD-2397	P4	F12	Chore	Closed	Done	Add the tech-implement skill to the migration plugin repo	29			2
+BUILD-2399	P4	F12	Chore	Closed	Done	Add the tech-review skill to the migration plugin repo	30			2
+BUILD-2400	P4	F12	Chore	Closed	Done	Add the tech-test skill to the migration plugin repo	33			2
+BUILD-2401	P4	F12	Chore	Closed	Done	Add create-pr skill to automate commits and pull requests	41			1
+BUILD-2402	P4	F5	Feature	New		Migrate the BuildConfig ServiceAccount and its RBAC, not just warn about it				
+BUILD-2431	P4	F11	Documentation	Review		Architecture doc for the BuildConfig-to-Shipwright plugin (docs/architecture.md)	64			2
+BUILD-2432	P4	F11	Documentation	Review		Support matrix for BuildConfig fields: what converts, what is dropped, what to do by hand (docs/support-matrix.md)	65			2
+BUILD-2433	P4	F11	Documentation	Review		Worked example: Docker build pushed to an external registry (docs/examples/docker-external-registry)	66			1
+BUILD-2434	P4	F11	Documentation	Review		Worked example: Source-to-Image build with an ImageStream builder (docs/examples/s2i-imagestream-builder)	67			1
+BUILD-2435	P4	F11	Documentation	Review		Worked example: a lossy Docker build with pull secret, volume, resources, post-commit hook, and inline Dockerfile (docs/examples/docker-lossy)	68			1
+BUILD-2436	P4	F11	Documentation	Review		README rewrite: correct the four false claims, name the crane pin, link the new docs (README.md)	69			1
+BUILD-2437	P4	F11	Documentation	Review		Architecture decision records for the migration plugin (docs/adr/, eight records and an index)	70			3
+BUILD-2438	P4	F9	Improvement	New		Name-collision warnings W2 and W3 cannot fire from the plugin: remove the dead branch or mark it library-only				
+BUILD-2439	P4	F5	Improvement	New		Quote the three names in the named-ServiceAccount pull-secret warning's oc command				
+BUILD-2459	P4	F4	Bug	New		Plugin drops S2I scripts, incremental and forcePull although the shipped strategy accepts them			port of the crane-lib mapping for BUILD-1606, 1607 and 1641, 1 point	1
+BUILD-2458	P4	F12	Chore	Closed	Done	Add /tech-document skill to keep repo docs in step with code changes			the skill that updates docs alongside a code change	2

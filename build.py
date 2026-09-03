@@ -202,14 +202,26 @@ def fig_layers():
 
 
 # ---------------------------------------------------------------- tables
+def feature_stats(fid):
+    """Story count, point total and unpointed count for one feature, all five epics."""
+    ss = [s for s in stories if s["feature"] == fid]
+    pts = sum(float(s["points"]) for s in ss if s["points"])
+    pts = int(pts) if pts.is_integer() else pts
+    return len(ss), pts, sum(1 for s in ss if not s["points"])
+
+
 def features_table():
     rows = []
     for f in features:
+        n, pts, blank = feature_stats(f["id"])
+        cell = f'{n} stories · {pts} pts'
+        if blank:
+            cell += f'<div class="src">{blank} unpointed</div>'
         items = "".join(f"<li>{e(t.strip())}</li>" for t in f["outcome"].split("|") if t.strip())
         rows.append(f'<tr><td class="k">{e(f["id"])} {e(f["name"])}</td><td><ul class="cell">{items}</ul></td>'
                     f'<td><span class="tag {f["status_class"]}">{e(f["status_text"])}</span>'
-                    + (f'<div class="src">{e(f["status_note"])}</div>' if f["status_note"] else "") + '</td></tr>')
-    return ('<div class="tablewrap"><table><thead><tr><th>Feature</th><th>What the user gets</th><th>Status</th></tr></thead>'
+                    + (f'<div class="src">{e(f["status_note"])}</div>' if f["status_note"] else "") + f'</td><td class="num">{cell}</td></tr>')
+    return ('<div class="tablewrap"><table><thead><tr><th>Feature</th><th>What the user gets</th><th>Status</th><th class="num">Stories · points</th></tr></thead>'
             f'<tbody>{"".join(rows)}</tbody></table></div>')
 
 
@@ -288,14 +300,21 @@ def filter_bar():
 
 def tally_table():
     rows = []
+    tot = {"n": 0, "pts": 0, "done": 0, "descoped": 0, "review": 0, "open": 0}
     for f in features:
-        ss = [s for s in stories if s["feature"] == f["id"] and s["phase"] != "TP"]
+        ss = [s for s in stories if s["feature"] == f["id"]]
+        n, pts, blank = feature_stats(f["id"])
         c = {"done": 0, "descoped": 0, "review": 0, "open": 0}
         for s in ss:
             c[state(s)] += 1
-        rows.append(f'<tr><td class="k">{e(f["id"])} {e(f["short"])}</td><td class="num">{len(ss)}</td><td class="num">{c["done"]}</td>'
+        for k in c:
+            tot[k] += c[k]
+        tot["n"] += n; tot["pts"] += pts
+        rows.append(f'<tr><td class="k">{e(f["id"])} {e(f["short"])}</td><td class="num">{n}</td><td class="num">{pts}</td><td class="num">{c["done"]}</td>'
                     f'<td class="num">{c["descoped"]}</td><td class="num">{c["review"]}</td><td class="num">{c["open"]}</td></tr>')
-    return ('<div class="tablewrap compact"><table><thead><tr><th>Feature</th><th class="num">Stories</th><th class="num">Done</th><th class="num">Descoped</th><th class="num">In review</th><th class="num">Not started</th></tr></thead>'
+    rows.append(f'<tr><td class="k">All features</td><td class="num">{tot["n"]}</td><td class="num">{tot["pts"]}</td><td class="num">{tot["done"]}</td>'
+                f'<td class="num">{tot["descoped"]}</td><td class="num">{tot["review"]}</td><td class="num">{tot["open"]}</td></tr>')
+    return ('<div class="tablewrap compact"><table><thead><tr><th>Feature</th><th class="num">Stories</th><th class="num">Points</th><th class="num">Done</th><th class="num">Descoped</th><th class="num">In review</th><th class="num">Not started</th></tr></thead>'
             f'<tbody>{"".join(rows)}</tbody></table></div>')
 
 
@@ -426,7 +445,7 @@ TEMPLATE = """<!doctype html>
   @@FILTERS@@
   @@STORIES@@
   <h3>Stories per feature</h3>
-  <p>The four enhancement epics only, @@N_ENH@@ stories. I left the Tech Preview stories out because they predate the feature split.</p>
+  <p>All five epics. Points are Jira story points on @@SNAPSHOT@@; a story with no estimate counts as zero and is flagged in the feature table above.</p>
   @@TALLY@@
 </section>
 
