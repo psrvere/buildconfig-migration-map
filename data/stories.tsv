@@ -86,14 +86,14 @@ BUILD-2399	P4	F12	Chore	Closed	Done	Add the tech-review skill to the migration p
 BUILD-2400	P4	F12	Chore	Closed	Done	Add the tech-test skill to the migration plugin repo	33		2	
 BUILD-2401	P4	F12	Chore	Closed	Done	Add create-pr skill to automate commits and pull requests	41		1	
 BUILD-2402	P4	F5	Feature	New		Migrate the BuildConfig ServiceAccount and its RBAC, not just warn about it			2	migrate the ServiceAccount and its RBAC
-BUILD-2431	P4	F11	Documentation	Review		Architecture doc for the BuildConfig-to-Shipwright plugin (docs/architecture.md)	64		2	architecture page
-BUILD-2432	P4	F11	Documentation	Review		Support matrix for BuildConfig fields: what converts, what is dropped, what to do by hand (docs/support-matrix.md)	65		2	support matrix
-BUILD-2433	P4	F11	Documentation	Review		Worked example: Docker build pushed to an external registry (docs/examples/docker-external-registry)	66		1	example, Docker build to an external registry
-BUILD-2434	P4	F11	Documentation	Review		Worked example: Source-to-Image build with an ImageStream builder (docs/examples/s2i-imagestream-builder)	67		1	example, S2I with an ImageStream builder
-BUILD-2435	P4	F11	Documentation	Review		Worked example: a lossy Docker build with pull secret, volume, resources, post-commit hook, and inline Dockerfile (docs/examples/docker-lossy)	68		1	example, a lossy Docker build
-BUILD-2436	P4	F11	Documentation	Review		README rewrite: correct the four false claims, name the crane pin, link the new docs (README.md)	69		1	README rewrite
-BUILD-2437	P4	F11	Documentation	Review		Architecture decision records for the migration plugin (docs/adr/, eight records and an index)	70		3	eight decision records
+BUILD-2431	P4	F11	Documentation	Closed	Done	Architecture doc for the BuildConfig-to-Shipwright plugin (docs/architecture.md)	64		2	architecture page
+BUILD-2432	P4	F11	Documentation	Closed	Done	Support matrix for BuildConfig fields: what converts, what is dropped, what to do by hand (docs/support-matrix.md)	65		2	support matrix
+BUILD-2433	P4	F11	Documentation	Closed	Done	Worked example: Docker build pushed to an external registry (docs/examples/docker-external-registry)	66		1	example, Docker build to an external registry
+BUILD-2434	P4	F11	Documentation	Closed	Done	Worked example: Source-to-Image build with an ImageStream builder (docs/examples/s2i-imagestream-builder)	67		1	example, S2I with an ImageStream builder
+BUILD-2435	P4	F11	Documentation	Closed	Done	Worked example: a lossy Docker build with pull secret, volume, resources, post-commit hook, and inline Dockerfile (docs/examples/docker-lossy)	68		1	example, a lossy Docker build
+BUILD-2436	P4	F11	Documentation	Closed	Done	README rewrite: correct the four false claims, name the crane pin, link the new docs (README.md)	69		1	README rewrite
+BUILD-2437	P4	F11	Documentation	Closed	Done	Architecture decision records for the migration plugin (docs/adr/, eight records and an index)	70		3	eight decision records
 BUILD-2438	P4	F9	Improvement	New		Name-collision warnings W2 and W3 cannot fire from the plugin: remove the dead branch or mark it library-only			1	remove the dead W2 and W3 warnings
 BUILD-2439	P4	F5	Improvement	New		Quote the three names in the named-ServiceAccount pull-secret warning's oc command			1	quote the names in the oc command
 BUILD-2459	P4	F4	Bug	New		Plugin drops S2I scripts, incremental and forcePull although the shipped strategy accepts them		port of the crane-lib mapping for BUILD-1606, 1607 and 1641, 1 point	1	port the three S2I params
-BUILD-2458	P4	F12	Chore	Closed	Done	Add /tech-document skill to keep repo docs in step with code changes		the skill that updates docs alongside a code change	2	
+BUILD-2458	P4	F12	Chore	Closed	Done	Add /tech-document skill to keep repo docs in step with code changes	73	the skill that updates docs alongside a code change	2	

@@ -87,8 +87,8 @@ SOURCES = [
     ("src-epic-p3", "BUILD-2254, Migration Tool Enhancement: Phase 3, Jira epic", JIRA + "BUILD-2254"),
     ("src-epic-p4", "BUILD-2394, Enhancement to Migration Tool, Phase 4, Jira epic", JIRA + "BUILD-2394"),
     ("src-readme", "crane-plugin-buildconfig-to-shipwright, README on main", PLUGIN + "/blob/main/README.md"),
-    ("src-arch", "PR #64, docs: add the architecture page (docs/architecture.md)", PLUGIN + "/pull/64"),
-    ("src-matrix", "PR #65, docs: add the BuildConfig support matrix (docs/support-matrix.md)", PLUGIN + "/pull/65"),
+    ("src-arch", "docs/architecture.md on main, merged from PR #64 on 2026-09-03", PLUGIN + "/blob/main/docs/architecture.md"),
+    ("src-matrix", "docs/support-matrix.md on main, merged from PR #65 on 2026-09-03", PLUGIN + "/blob/main/docs/support-matrix.md"),
     ("src-converter", "buildconfig/converter.go at b05b610, lines 592 to 599, the three S2I RFE warnings", PLUGIN + "/blob/b05b610/buildconfig/converter.go#L592-L599"),
     ("src-s2i-yaml", "operator config/shipwright/build/strategy/source-to-image.yaml at ea1b42e1, params scripts-url, pull-policy, incremental", OPERATOR + "/blob/ea1b42e1/config/shipwright/build/strategy/source-to-image.yaml"),
     ("src-2323", "BUILD-2323, triage comment of 2026-08-24 on where the strategy params landed", JIRA + "BUILD-2323"),
@@ -519,7 +519,7 @@ TEMPLATE = """<!doctype html>
         <tr><td class="k">F10 Tests and CI</td><td><a href="@@PLUGIN@@/pull/4">#4</a> CI build job, <a href="@@PLUGIN@@/pull/17">#17</a> cluster E2E infrastructure, <a href="@@PLUGIN@@/pull/60">#60</a> S2I and Docker cluster E2E with insecure output</td><td>aufi</td><td><span class="tag ok">merged</span>@@R_PR4@@@@R_PR17@@@@R_PR60@@</td></tr>
         <tr><td class="k">F10 Tests and CI</td><td><a href="@@PLUGIN@@/pull/63">#63</a> YAML-based E2E test framework, 18 real-world BuildConfigs, 7 of 18 passing</td><td>midays</td><td><span class="tag warn">open</span>@@R_PR63@@</td></tr>
         <tr><td class="k">F14 Upstream alignment</td><td><a href="@@PLUGIN@@/pull/5">#5</a> x/net bump, <a href="@@PLUGIN@@/pull/62">#62</a> downgrade Go to 1.25</td><td>dependabot, aufi</td><td><span class="tag ok">merged</span></td></tr>
-        <tr><td class="k">F12 Engineering workflow</td><td><a href="@@PLUGIN@@/pull/34">#34</a> skills README, <a href="@@PLUGIN@@/pull/71">#71</a> agent doc rules, and the skill chores #39, #40, #42 to #45, #48, #49, #52, #53</td><td>psrvere</td><td><span class="tag warn">#34 and #71 open</span>, the rest merged</td></tr>
+        <tr><td class="k">F12 Agent skills</td><td><a href="@@PLUGIN@@/pull/34">#34</a> skills README, <a href="@@PLUGIN@@/pull/71">#71</a> agent rules in AGENTS.md, and the skill chores #39, #40, #42 to #45, #48, #49, #52, #53</td><td>psrvere</td><td><span class="tag warn">#34 open</span>, the rest merged</td></tr>
       </tbody>
     </table>
   </div>
@@ -549,7 +549,7 @@ TEMPLATE = """<!doctype html>
   </ul>
   <h3>Documentation</h3>
   <ul>
-    <li>Seven pull requests in review: the architecture page in #64, the support matrix in #65, three worked examples in #66 to #68, the README rewrite in #69, the decision records in #70.@@R_ARCH@@@@R_MATRIX@@</li>
+    <li>The documentation series merged on 2026-09-03: the architecture page, the support matrix, three worked examples, the README rewrite, eight decision records, and the agent rules in AGENTS.md.@@R_ARCH@@@@R_MATRIX@@</li>
     <li>@@J2341@@ docs pack, @@J2393@@ trigger runbook, @@J1764@@ crane help text. Not started.</li>
     <li>@@J1950@@ blog post on RHEL entitled builds. Backlog.</li>
   </ul>
