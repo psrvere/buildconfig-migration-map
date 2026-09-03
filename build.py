@@ -133,21 +133,28 @@ def fig_pipeline():
         ("crane apply", "to the target cluster", ""),
         ("Shipwright Build", "with SA, ConfigMap, template", ""),
     ]
-    w, gap, y, h = 150, 26, 30, 62
+    w, h, gap, m = 300, 84, 40, 10
+    rows_y = [16, 176]
     parts = ['<defs><marker id="fig1-arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="var(--muted)"/></marker></defs>']
-    x = 12
-    for i, (t, s, cls) in enumerate(boxes):
-        parts.append(f'<rect class="box {cls}" x="{x}" y="{y}" width="{w}" height="{h}" rx="4"/>')
+    for i, (t, sub, cls) in enumerate(boxes):
+        row, col = divmod(i, 3)
+        x, y = m + col * (w + gap), rows_y[row]
+        parts.append(f'<rect class="box {cls}" x="{x}" y="{y}" width="{w}" height="{h}" rx="5"/>')
         tc = " acc" if cls else ""
-        parts.append(f'<text class="t{tc}" x="{x + w/2}" y="{y + 26}" text-anchor="middle" font-size="13">{e(t)}</text>')
-        parts.append(f'<text class="s" x="{x + w/2}" y="{y + 44}" text-anchor="middle">{e(s)}</text>')
-        if i < len(boxes) - 1:
-            parts.append(f'<path d="M{x + w} {y + h/2} H{x + w + gap - 2}" fill="none" stroke="var(--muted)" stroke-width="1.2" marker-end="url(#fig1-arr)"/>')
-        x += w + gap
-    total = x - gap + 12
+        parts.append(f'<text class="t{tc}" x="{x + w/2}" y="{y + 36}" text-anchor="middle" style="font-size:20px">{e(t)}</text>')
+        parts.append(f'<text class="s" x="{x + w/2}" y="{y + 62}" text-anchor="middle" style="font-size:15px">{e(sub)}</text>')
+        if col < 2:
+            parts.append(f'<path d="M{x + w} {y + h/2} H{x + w + gap - 3}" fill="none" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#fig1-arr)"/>')
+    # wrap from the end of row one to the start of row two
+    x3 = m + 2 * (w + gap) + w / 2
+    x4 = m + w / 2
+    y_channel = rows_y[0] + h + 38
+    parts.append(f'<path d="M{x3} {rows_y[0] + h} V{y_channel} H{x4} V{rows_y[1] - 3}" fill="none" stroke="var(--muted)" stroke-width="1.5" marker-end="url(#fig1-arr)"/>')
+    total_w = 2 * m + 3 * w + 2 * gap
+    total_h = rows_y[1] + h + 16
     return f'''<figure>
   <div class="figwrap">
-    <svg viewBox="0 0 {total} 124" role="img" aria-label="Six stages left to right: BuildConfig on the source cluster, crane export, crane transform running this plugin, review, crane apply, Shipwright Build with its companion objects.">{"".join(parts)}</svg>
+    <svg viewBox="0 0 {total_w} {total_h}" role="img" aria-label="Six stages in two rows: BuildConfig on the source cluster, crane export, crane transform running this plugin, then review, crane apply, and the Shipwright Build with its companion objects.">{"".join(parts)}</svg>
   </div>
   <figcaption><b>Figure 1. Where the plugin sits.</b> crane exports the namespace to disk, the plugin converts each object during transform, and nothing touches the target cluster until apply. The blue box is this plugin. Source: README, "What it does" and "Usage with crane".{ref("src-readme")}</figcaption>
 </figure>'''
@@ -157,26 +164,32 @@ def fig_layers():
     by_layer = {}
     for f in features:
         by_layer.setdefault(f["layer"], []).append(f)
-    row_h, top, label_w, bw, bh, gap = 62, 14, 186, 124, 44, 8
+    per_line, bw, bh, gap, m = 5, 196, 56, 8, 12
+    width = 2 * m + per_line * bw + (per_line - 1) * gap
     parts = []
+    y = 12
     for i, L in enumerate(layers):
-        y = top + i * row_h
-        cy = y + bh / 2
-        parts.append(f'<text class="t" x="14" y="{cy - 2}" font-size="13">{e(L["id"])}. {e(L["name"])}</text>')
+        fs = by_layer.get(L["id"], [])
+        parts.append(f'<text class="t" x="{m + 2}" y="{y + 18}" style="font-size:19px">{e(L["id"])}. {e(L["name"])}</text>')
         if L["sub"]:
-            parts.append(f'<text class="s" x="14" y="{cy + 13}">{e(L["sub"])}</text>')
-        x = label_w
-        for f in by_layer.get(L["id"], []):
-            parts.append(f'<rect class="box {f["status_class"]}" x="{x}" y="{y}" width="{bw}" height="{bh}" rx="4"/>')
-            parts.append(f'<text class="t {f["status_class"]}" x="{x + 10}" y="{y + 18}" font-size="12">{e(f["id"])}</text>')
-            parts.append(f'<text class="s" x="{x + 10}" y="{y + 34}">{e(f["short"])}</text>')
-            x += bw + gap
+            parts.append(f'<text class="s" x="{width - m - 2}" y="{y + 18}" text-anchor="end" style="font-size:15px">{e(L["sub"])}</text>')
+        by = y + 32
+        for j, f in enumerate(fs):
+            line, col = divmod(j, per_line)
+            x = m + col * (bw + gap)
+            yy = by + line * (bh + gap)
+            parts.append(f'<rect class="box {f["status_class"]}" x="{x}" y="{yy}" width="{bw}" height="{bh}" rx="5"/>')
+            parts.append(f'<text class="t {f["status_class"]}" x="{x + 12}" y="{yy + 24}" style="font-size:18px">{e(f["id"])}</text>')
+            parts.append(f'<text class="s" x="{x + 12}" y="{yy + 45}" style="font-size:15px">{e(f["short"])}</text>')
+        lines = (len(fs) + per_line - 1) // per_line
+        y = by + lines * (bh + gap) - gap + 18
         if i < len(layers) - 1:
-            parts.append(f'<line x1="14" y1="{y + bh + 9}" x2="986" y2="{y + bh + 9}" stroke="var(--line)" stroke-width="1"/>')
-    height = top + len(layers) * row_h
+            parts.append(f'<line x1="{m}" y1="{y}" x2="{width - m}" y2="{y}" stroke="var(--line)" stroke-width="1"/>')
+            y += 18
+    height = y + 4
     return f'''<figure>
   <div class="figwrap">
-    <svg viewBox="0 0 1000 {height}" role="img" aria-label="Seven layers, each holding its features as boxes coloured by status. Convert holds six features, five shipped and S2I parity a gap. Carry the environment holds credentials and volumes, partly done, and pre-flight checks, descoped. Tell the truth holds outcome and warnings, shipped, and triggers, partly. Safe to re-run is shipped. Prove it is partly done. Explain it is in review. Build it faster holds the engineering workflow, shipped, and upstream alignment, partly.">{"".join(parts)}</svg>
+    <svg viewBox="0 0 {width} {height}" role="img" aria-label="Seven layers, each holding its features as boxes coloured by status. Convert holds six features, five shipped and S2I parity a gap. Carry the environment holds credentials and volumes, partly done, and pre-flight checks, descoped. Tell the truth holds outcome and warnings, shipped, and triggers, partly. Safe to re-run is shipped. Prove it is partly done. Explain it is in review. Build it faster holds the engineering workflow, shipped, and upstream alignment, partly.">{"".join(parts)}</svg>
   </div>
   <figcaption><b>Figure 2. The feature map.</b> Fifteen features in seven layers. A layer is a question a reader asks in order: does it convert, does the Build have what it needs on the target, does the tool admit what it lost, can it run twice, is it proven, is it explained, can the team build it fast. Colour is the status on {SNAPSHOT}, derived from the story map in section 4 and the code on main.{ref("src-epic-p4", "src-readme")}</figcaption>
   <div class="legend">
