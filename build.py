@@ -448,8 +448,6 @@ TEMPLATE = """<!doctype html>
 <nav class="toc" aria-label="Contents">
   <div class="eyebrow">Contents</div>
   <ol>
-    <li><a href="#goal"><span class="n">-</span>Goal</a></li>
-    <li><a href="#summary"><span class="n">-</span>In short</a></li>
     <li><a href="#s1"><span class="n">1</span>What the tool does</a></li>
     <li><a href="#s2"><span class="n">2</span>The feature map</a></li>
     <li><a href="#s3"><span class="n">3</span>Phases</a></li>
@@ -474,23 +472,6 @@ TEMPLATE = """<!doctype html>
   </div>
   <p class="note">Jira and GitHub as of @@SNAPSHOT@@. The feature ids, the layers and the story types are mine, not Jira fields. <code>build.py</code> generates this page from <code>data/*.tsv</code>.</p>
 </header>
-
-<section id="goal">
-  <div class="answer">
-    <div class="eyebrow">Goal</div>
-    <p>Two readers. A product manager or teammate who wants to know what the BuildConfig to Shipwright migration tool can do today and what it still cannot, without opening Jira. And me, planning Phase 4 from the same list, so the two views cannot drift apart.</p>
-  </div>
-</section>
-
-<section id="summary">
-  <h2>In short</h2>
-  <p>The tool is a crane transform plugin. It reads a namespace export from disk and turns every BuildConfig into a Shipwright Build, offline, with each dropped field recorded on the object.@@R_README@@ Of the fifteen features, @@STATUS_SENTENCE@@.@@R_PRS@@</p>
-  <p>The five epics hold @@N_ALL@@ stories. @@N_DONE@@ are done. We closed @@N_DESC@@ without building them, and @@N_OPENALL@@ are open, @@N_REV@@ of those in review or waiting.@@R_EPICS@@</p>
-  <div class="callout">
-    <p>Four things the epic view hides. Three S2I options are Done in Jira, and the plugin still drops them. That one bites a customer with custom S2I scripts on day one, and is now @@J2459@@. CI proves the base strategy param names only, not the catalog-only ones. The plugin preserves triggers but cannot migrate them. And the test infrastructure has no Jira footprint at all.</p>
-  </div>
-  <p>What is left to build sits in one layer. The ServiceAccount and its RBAC, the trusted CA volume, and chained builds are the engineering stories left. Everything else open is documentation.@@R_P4@@</p>
-</section>
 
 <section id="s1">
   <h2>1. What the tool does</h2>
