@@ -18,7 +18,7 @@ python3 build.py      # writes index.html from data/*.tsv
 
 | File | What it holds |
 |---|---|
-| `data/stories.tsv` | one row per story: key, phase, feature, type, Jira status and resolution, title, PR numbers, note, story points |
+| `data/stories.tsv` | one row per story: key, phase, feature, type, Jira status and resolution, title, PR numbers, note, story points, and a short title used in the pending column while the story is open |
 | `data/features.tsv` | the fifteen features: id, short name, name, layer, what the user gets as pipe-separated bullets, an optional status override, an optional note under the status |
 | `data/layers.tsv` | the seven layers the features sit in |
 | `build.py` | the prose sections, the two SVG figures, the sources list, and the story-table filters |

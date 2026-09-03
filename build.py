@@ -255,6 +255,22 @@ def feature_stats(fid):
     return len(ss), pts, sum(1 for s in ss if not s["points"])
 
 
+PENDING_EXTRA = {
+    "F10": [(f'<a href="{PLUGIN}/pull/63">PR #63</a>', "YAML-rules E2E framework", "open")],
+}
+
+
+def pending_cell(fid):
+    order = {"active": 0, "open": 1}
+    ss = sorted((x for x in stories if x["feature"] == fid and state(x) in order),
+                key=lambda x: (order[state(x)], x["key"]))
+    items = [(jira(x["key"]), x["short"] or x["title"], x["status"]) for x in ss] + PENDING_EXTRA.get(fid, [])
+    if not items:
+        return '<span class="muted">none</span>'
+    return '<ul class="cell">' + "".join(
+        f'<li><span class="nowrap">{k} ·</span> {e(t)} <span class="muted nowrap">· {e(st)}</span></li>' for k, t, st in items) + '</ul>'
+
+
 def features_table():
     rows = []
     for f in features:
@@ -266,8 +282,8 @@ def features_table():
         fs = feature_status(f)
         rows.append(f'<tr><td class="k">{e(f["id"])} {e(f["name"])}</td><td><ul class="cell">{items}</ul></td>'
                     f'<td><span class="tag {FEATURE_CLASS[fs]}">{e(fs)}</span>'
-                    + (f'<div class="src">{e(f["status_note"])}</div>' if f["status_note"] else "") + f'</td><td class="num">{cell}</td></tr>')
-    return ('<div class="tablewrap"><table><thead><tr><th>Feature</th><th>What the user gets</th><th>Status</th><th class="num">Stories · points</th></tr></thead>'
+                    + (f'<div class="src">{e(f["status_note"])}</div>' if f["status_note"] else "") + f'</td><td>{pending_cell(f["id"])}</td><td class="num">{cell}</td></tr>')
+    return ('<div class="tablewrap" id="features"><table><thead><tr><th>Feature</th><th>What the user gets</th><th>Status</th><th>Pending stories</th><th class="num">Stories · points</th></tr></thead>'
             f'<tbody>{"".join(rows)}</tbody></table></div>')
 
 
@@ -374,6 +390,11 @@ tr[hidden] { display: none; }
 ul.cell { margin: 0; padding-left: 1.1rem; max-width: none; }
 ul.cell li { margin: 0.15rem 0; }
 .legend .l-acc::before { background: var(--accent-soft); border-color: var(--accent); }
+.nowrap { white-space: nowrap; }
+#features td.k { white-space: normal; min-width: 14ch; }
+#features td:nth-child(2) { min-width: 26ch; }
+#features td:nth-child(3) { min-width: 12ch; }
+#features td:nth-child(4) { min-width: 28ch; }
 .hero .note { margin-top: 1rem; }
 """
 
