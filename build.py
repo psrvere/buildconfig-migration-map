@@ -264,16 +264,24 @@ PENDING_EXTRA = {
     "F10": [(f'<a href="{PLUGIN}/pull/63">PR #63</a>', "YAML-rules E2E framework", "open")],
 }
 
+# work outside the five migration epics that a feature waits on: key, short title, state
+DEPENDS = {
+    "F8": [("BUILD-1706", "install triggers via the operator", "New, 3 pts, under epic BUILD-301"),
+           ("BUILD-2074", "expand Shipwright trigger sources", "epic, New, three upstream stories")],
+}
+
 
 def pending_cell(fid):
     order = {"active": 0, "open": 1}
     ss = sorted((x for x in stories if x["feature"] == fid and state(x) in order),
                 key=lambda x: (order[state(x)], x["key"]))
     items = [(jira(x["key"]), x["short"] or x["title"], x["status"]) for x in ss] + PENDING_EXTRA.get(fid, [])
-    if not items:
-        return '<span class="muted">none</span>'
-    return '<ul class="cell">' + "".join(
+    out = '<span class="muted">none</span>' if not items else '<ul class="cell">' + "".join(
         f'<li><span class="nowrap">{k} ·</span> {e(t)} <span class="muted nowrap">· {e(st)}</span></li>' for k, t, st in items) + '</ul>'
+    if fid in DEPENDS:
+        out += '<div class="src" style="margin-top:0.5rem">Depends on, outside this project</div><ul class="cell src">' + "".join(
+            f'<li><span class="nowrap">{e(k)} ·</span> {e(t)} · {e(st)}</li>' for k, t, st in DEPENDS[fid]) + '</ul>'
+    return out
 
 
 def features_table():
@@ -553,6 +561,10 @@ TEMPLATE = """<!doctype html>
     <li>@@J2459@@ port the three S2I mappings from crane-lib and retire the three RFE warnings. Not started, one point.</li>
     <li>@@J2438@@ and @@J2439@@, two small cleanups in the warnings.</li>
   </ul>
+  <h3>Outside this project</h3>
+  <ul>
+    <li>BUILD-1706 install triggers via the operator, New, 3 points. BUILD-2074 expand Shipwright trigger sources, an epic with three New upstream stories. Until one of them lands, no migrated build fires by itself.</li>
+  </ul>
   <h3>Documentation</h3>
   <ul>
     <li>The documentation series merged on 2026-09-03: the architecture page, the support matrix, three worked examples, the README rewrite, eight decision records, and the agent rules in AGENTS.md.@@R_ARCH@@@@R_MATRIX@@</li>
@@ -609,6 +621,30 @@ page = (TEMPLATE
 for key in ["2402", "2265", "2342", "2326", "2334", "2438", "2439", "2341", "2393", "1764", "1950", "2315", "2459"]:
     page = page.replace(f"@@J{key}@@", jira(f"BUILD-{key}"))
 
+def link_keys(page):
+    """Turn every BUILD-nnnn in visible text into a Jira link, leaving anchors, tags, scripts and styles alone."""
+    out, depth, skip = [], 0, 0
+    for m in re.finditer(r"<[^>]+>|[^<]+", page):
+        tok = m.group(0)
+        if tok.startswith("<"):
+            low = tok.lower()
+            if low.startswith("<a ") or low == "<a>":
+                depth += 1
+            elif low.startswith("</a"):
+                depth -= 1
+            elif low.startswith("<script") or low.startswith("<style"):
+                skip += 1
+            elif low.startswith("</script") or low.startswith("</style"):
+                skip -= 1
+            out.append(tok)
+        elif depth or skip:
+            out.append(tok)
+        else:
+            out.append(re.sub(r"\bBUILD-(\d+)\b", lambda k: f'<a href="{JIRA}{k.group(0)}">{k.group(0)}</a>', tok))
+    return "".join(out)
+
+
+page = link_keys(page)
 page, items = number_sources(page)
 page = page.replace("@@SOURCES@@", items)
 leftover = [l for l in page.split("\n") if "@@" in l or "@REF:" in l]
