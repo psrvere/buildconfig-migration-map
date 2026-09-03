@@ -304,15 +304,10 @@ def progress_block():
                 f'<div class="m-val" title="{tip}">{done}/{total} pts · {pct}%</div>')
     scope = [x for x in stories if state(x) != "notdone"]
     done_all = [x for x in scope if state(x) == "done"]
-    rows.append(meter("All features", points_of(done_all), points_of(scope), len(done_all), len(scope), strong=True))
-    for f in features:
-        ss = [x for x in scope if x["feature"] == f["id"]]
-        dd = [x for x in ss if state(x) == "done"]
-        empty = "no Jira stories, PR-only work" if f["status_override"] else "no work in scope"
-        rows.append(meter(f'{e(f["id"])} {e(f["short"])}', points_of(dd), points_of(ss), len(dd), len(ss), empty=empty))
+    rows.append(meter("Whole project", points_of(done_all), points_of(scope), len(done_all), len(scope), strong=True))
     return f'''<figure>
   <div class="meters">{"".join(rows)}</div>
-  <figcaption><b>Figure 2. Progress by story points.</b> The fill is the share of points on closed-done stories. The whole bar is every story still in scope for that feature. Stories closed without work are left out of both numbers, so a feature that was declined shows no bar. Hover a bar for the story counts. Points are Jira estimates as of {SNAPSHOT}.{ref("src-epic-p4")}</figcaption>
+  <figcaption><b>Figure 2. Project progress by story points.</b> The fill is the share of points on closed-done stories across all five epics. The whole bar is every story still in scope. Stories closed without work are left out of both numbers. Hover the bar for the story counts. Points are Jira estimates as of {SNAPSHOT}.{ref("src-epic-p4")}</figcaption>
 </figure>'''
 
 
@@ -439,9 +434,9 @@ ul.cell li { margin: 0.15rem 0; }
 .nowrap { white-space: nowrap; }
 .meters { display: grid; grid-template-columns: max-content minmax(12rem, 1fr) max-content; gap: 0.5rem 1rem; align-items: center; font-size: 0.88rem; padding: 0.2rem 0.2rem 0.4rem; }
 .meters .all { font-weight: 600; }
-.m-track { height: 10px; background: var(--ok-soft); border-radius: 4px; overflow: hidden; }
+.m-track { height: 14px; background: var(--ok-soft); border-radius: 4px; overflow: hidden; }
 .m-fill { height: 100%; background: var(--ok); border-radius: 4px; }
-.m-val { font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; }
+.m-val { font-variant-numeric: tabular-nums; color: var(--ink); white-space: nowrap; font-weight: 600; }
 #features td.k { white-space: normal; min-width: 14ch; }
 #features td:nth-child(2) { min-width: 26ch; }
 #features td:nth-child(3) { min-width: 12ch; }
