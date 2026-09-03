@@ -240,7 +240,7 @@ def fig_layers():
   <div class="figwrap">
     <svg viewBox="0 0 {width} {height}" role="img" aria-label="Seven layers, each holding its features as boxes coloured by status. Green is shipped, amber is in progress, blue is todo, grey dashed is won\'t do, outline only is refinement. {ARIA_COUNTS}">{"".join(parts)}</svg>
   </div>
-  <figcaption><b>Figure 2. The feature map.</b> Fifteen features in seven layers. A layer is a question a reader asks in order: does it convert, does the Build have what it needs on the target, does the tool admit what it lost, can it run twice, is it proven, is it explained, can the team build it fast. Colour is the status on {SNAPSHOT}. I set it from the story map in section 4 and the code on main.{ref("src-epic-p4", "src-readme")}</figcaption>
+  <figcaption><b>Figure 3. The feature map.</b> Fifteen features in seven layers. A layer is a question a reader asks in order: does it convert, does the Build have what it needs on the target, does the tool admit what it lost, can it run twice, is it proven, is it explained, can the team build it fast. Colour is the status on {SNAPSHOT}. I set it from the story map in section 4 and the code on main.{ref("src-epic-p4", "src-readme")}</figcaption>
   <div class="legend">
     <span class="l-ok">shipped</span>
     <span class="l-warn">in progress</span>
@@ -282,6 +282,38 @@ def pending_cell(fid):
         out += '<div class="src" style="margin-top:0.5rem">Depends on, outside this project</div><ul class="cell src">' + "".join(
             f'<li><span class="nowrap">{e(k)} ·</span> {e(t)} · {e(st)}</li>' for k, t, st in DEPENDS[fid]) + '</ul>'
     return out
+
+
+def points_of(ss):
+    v = sum(float(x["points"]) for x in ss if x["points"])
+    return int(v) if v.is_integer() else v
+
+
+def progress_block():
+    """One meter per feature: story points done over points still in scope.
+    Stories closed without work are left out of both numbers."""
+    rows = []
+    def meter(label, done, total, ndone, nall, strong=False, empty="no work in scope"):
+        cls = ' class="all"' if strong else ""
+        if total == 0:
+            return (f'<div{cls}>{label}</div><div class="m-track" title="{e(empty)}"></div>'
+                    f'<div class="m-val">{e(empty)}</div>')
+        pct = round(100 * done / total)
+        tip = f'{done} of {total} points done, {ndone} of {nall} stories'
+        return (f'<div{cls}>{label}</div><div class="m-track" title="{tip}"><div class="m-fill" style="width:{pct}%"></div></div>'
+                f'<div class="m-val" title="{tip}">{done}/{total} pts · {pct}%</div>')
+    scope = [x for x in stories if state(x) != "notdone"]
+    done_all = [x for x in scope if state(x) == "done"]
+    rows.append(meter("All features", points_of(done_all), points_of(scope), len(done_all), len(scope), strong=True))
+    for f in features:
+        ss = [x for x in scope if x["feature"] == f["id"]]
+        dd = [x for x in ss if state(x) == "done"]
+        empty = "no Jira stories, PR-only work" if f["status_override"] else "no work in scope"
+        rows.append(meter(f'{e(f["id"])} {e(f["short"])}', points_of(dd), points_of(ss), len(dd), len(ss), empty=empty))
+    return f'''<figure>
+  <div class="meters">{"".join(rows)}</div>
+  <figcaption><b>Figure 2. Progress by story points.</b> The fill is the share of points on closed-done stories. The whole bar is every story still in scope for that feature. Stories closed without work are left out of both numbers, so a feature that was declined shows no bar. Hover a bar for the story counts. Points are Jira estimates as of {SNAPSHOT}.{ref("src-epic-p4")}</figcaption>
+</figure>'''
 
 
 def features_table():
@@ -405,6 +437,11 @@ ul.cell li { margin: 0.15rem 0; }
 .legend .l-acc::before { background: var(--accent-soft); border-color: var(--accent); }
 .legend .l-ring::before { background: none; border-color: var(--line); }
 .nowrap { white-space: nowrap; }
+.meters { display: grid; grid-template-columns: max-content minmax(12rem, 1fr) max-content; gap: 0.5rem 1rem; align-items: center; font-size: 0.88rem; padding: 0.2rem 0.2rem 0.4rem; }
+.meters .all { font-weight: 600; }
+.m-track { height: 10px; background: var(--ok-soft); border-radius: 4px; overflow: hidden; }
+.m-fill { height: 100%; background: var(--ok); border-radius: 4px; }
+.m-val { font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; }
 #features td.k { white-space: normal; min-width: 14ch; }
 #features td:nth-child(2) { min-width: 26ch; }
 #features td:nth-child(3) { min-width: 12ch; }
@@ -475,6 +512,7 @@ TEMPLATE = """<!doctype html>
 <section id="s2">
   <h2>2. The feature map</h2>
   <p>Fifteen features, grouped into seven layers. The layers are the questions a reader asks in order, and the colour is where each feature stands today. Status follows the stories. Shipped means every story is done and nothing is open. In progress means some of it has landed or is being worked and something is still open, or a pull request is open. Todo means stories are filed and none is done or started. Won't do means every story closed without work. Refinement means no story is filed yet.</p>
+  @@PROGRESS@@
   @@FIG2@@
   @@FEATURES@@
 </section>
@@ -571,7 +609,7 @@ page = (TEMPLATE
         .replace("@@N_DESC@@", str(n_desc)).replace("@@N_REV@@", str(n_rev))
         .replace("@@N_OPENALL@@", str(n_rev + n_open)).replace("@@N_ENH@@", str(n_enh))
         .replace("@@STATUS_SENTENCE@@", status_sentence())
-        .replace("@@FIG1@@", fig_pipeline()).replace("@@FIG2@@", fig_layers())
+        .replace("@@FIG1@@", fig_pipeline()).replace("@@PROGRESS@@", progress_block()).replace("@@FIG2@@", fig_layers())
         .replace("@@FEATURES@@", features_table()).replace("@@PHASES@@", phase_table())
         .replace("@@FILTERS@@", filter_bar()).replace("@@STORIES@@", story_table())
         .replace("@@TALLY@@", tally_table())
