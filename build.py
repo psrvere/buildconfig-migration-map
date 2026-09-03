@@ -463,14 +463,6 @@ TEMPLATE = """<!doctype html>
 <header class="hero">
   <div class="eyebrow">BuildConfig to Shipwright migration . status page . @@SNAPSHOT@@</div>
   <h1>BuildConfig to Shipwright migration map</h1>
-  <p class="lede">What the crane migration plugin does today, which features each phase delivered, what is still open, and the gaps the Jira epics hide.</p>
-  <div class="facts">
-    <div class="fact"><div class="v">15</div><div class="k">features in 7 layers</div></div>
-    <div class="fact"><div class="v">@@N_ALL@@</div><div class="k">stories in 5 epics</div></div>
-    <div class="fact"><div class="v">@@N_DONE@@</div><div class="k">done</div></div>
-    <div class="fact"><div class="v">@@N_OPENALL@@</div><div class="k">open, @@N_REV@@ of them in review or waiting</div></div>
-  </div>
-  <p class="note">Jira and GitHub as of @@SNAPSHOT@@. The feature ids, the layers and the story types are mine, not Jira fields. <code>build.py</code> generates this page from <code>data/*.tsv</code>.</p>
 </header>
 
 <section id="s1">
