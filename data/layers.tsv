@@ -1,0 +1,8 @@
+id	name	sub
+A	Convert	the plugin core
+B	Carry the environment	what the Build needs on the target
+C	Tell the truth	nothing is lost silently
+D	Safe to re-run	
+E	Prove it	
+F	Explain it	Phase 4
+G	Build it faster	engineering system
