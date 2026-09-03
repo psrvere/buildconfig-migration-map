@@ -191,7 +191,7 @@ def fig_layers():
   <div class="figwrap">
     <svg viewBox="0 0 {width} {height}" role="img" aria-label="Seven layers, each holding its features as boxes coloured by status. Convert holds six features, five shipped and S2I parity a gap. Carry the environment holds credentials and volumes, partly done, and pre-flight checks, descoped. Tell the truth holds outcome and warnings, shipped, and triggers, partly. Safe to re-run is shipped. Prove it is partly done. Explain it is in review. Build it faster holds the engineering workflow, shipped, and upstream alignment, partly.">{"".join(parts)}</svg>
   </div>
-  <figcaption><b>Figure 2. The feature map.</b> Fifteen features in seven layers. A layer is a question a reader asks in order: does it convert, does the Build have what it needs on the target, does the tool admit what it lost, can it run twice, is it proven, is it explained, can the team build it fast. Colour is the status on {SNAPSHOT}, derived from the story map in section 4 and the code on main.{ref("src-epic-p4", "src-readme")}</figcaption>
+  <figcaption><b>Figure 2. The feature map.</b> Fifteen features in seven layers. A layer is a question a reader asks in order: does it convert, does the Build have what it needs on the target, does the tool admit what it lost, can it run twice, is it proven, is it explained, can the team build it fast. Colour is the status on {SNAPSHOT}. I set it from the story map in section 4 and the code on main.{ref("src-epic-p4", "src-readme")}</figcaption>
   <div class="legend">
     <span class="l-ok">shipped on main</span>
     <span class="l-warn">partly shipped or in review</span>
@@ -205,7 +205,8 @@ def fig_layers():
 def features_table():
     rows = []
     for f in features:
-        rows.append(f'<tr><td class="k">{e(f["id"])} {e(f["name"])}</td><td>{e(f["outcome"])}</td>'
+        items = "".join(f"<li>{e(t.strip())}</li>" for t in f["outcome"].split("|") if t.strip())
+        rows.append(f'<tr><td class="k">{e(f["id"])} {e(f["name"])}</td><td><ul class="cell">{items}</ul></td>'
                     f'<td><span class="tag {f["status_class"]}">{e(f["status_text"])}</span></td></tr>')
     return ('<div class="tablewrap"><table><thead><tr><th>Feature</th><th>What the user gets</th><th>Status</th></tr></thead>'
             f'<tbody>{"".join(rows)}</tbody></table></div>')
@@ -219,7 +220,7 @@ def phase_table():
         c[state(s)] += 1
     meta = {
         "TP": ("Closed 2026-03-21", "crane convert proof of concept: Docker and S2I strategies, BuildSource types, a trigger spike, a demo", "src-epic-tp"),
-        "P1": ("Closed 2026-07-21", "Operator-side buildah params (no-cache, runtime-stage-from), the S2I registry pull secret, output to the internal registry. Targeted builds-1.8 and was pulled out of the 1.9.0 release in May 2026", "src-epic-p1"),
+        "P1": ("Closed 2026-07-21", "Buildah params in the operator, no-cache and runtime-stage-from, plus the S2I registry pull secret and output to the internal registry. It targeted builds-1.8 and the team pulled it out of the 1.9.0 release in May 2026", "src-epic-p1"),
         "P2": ("Closed 2026-09-02", "The RFE catch-all: buildah and S2I flags, secrets, ConfigMaps and volumes, source examples, idempotency, naming, the upstream omitempty change", "src-epic-p2"),
         "P3": ("Closed 2026-09-02", "Production readiness from the gap analysis: full field coverage, five code bugs, the outcome model, per-field warnings", "src-epic-p3"),
         "P4": ("Open", "Documentation and runbooks, the engineering skills, and the engineering that is left: SA and RBAC, trusted CA, chained builds, omitempty", "src-epic-p4"),
@@ -313,6 +314,8 @@ EXTRA_CSS = """
 .filters button:hover { border-color: var(--accent); }
 #stories table td:nth-child(4) { min-width: 26ch; }
 tr[hidden] { display: none; }
+ul.cell { margin: 0; padding-left: 1.1rem; max-width: none; }
+ul.cell li { margin: 0.15rem 0; }
 .hero .note { margin-top: 1rem; }
 """
 
@@ -376,31 +379,31 @@ TEMPLATE = """<!doctype html>
     <div class="fact"><div class="v">@@N_DONE@@</div><div class="k">done</div></div>
     <div class="fact"><div class="v">@@N_OPENALL@@</div><div class="k">open, @@N_REV@@ of them in review</div></div>
   </div>
-  <p class="note">Jira and GitHub snapshot of @@SNAPSHOT@@. The feature ids, the layers and the story types are the author's classification, not Jira fields. Generated from <code>data/*.tsv</code> by <code>build.py</code>.</p>
+  <p class="note">Jira and GitHub as of @@SNAPSHOT@@. The feature ids, the layers and the story types are mine, not Jira fields. <code>build.py</code> generates this page from <code>data/*.tsv</code>.</p>
 </header>
 
 <section id="goal">
   <div class="answer">
     <div class="eyebrow">Goal</div>
-    <p>Give a product manager or a team member one page that says what the BuildConfig to Shipwright migration tool does today, which features each phase delivered, what is still open, and where the Jira epics hide a gap. The same page is the author's planning list for Phase 4 and after.</p>
+    <p>Two readers. A product manager or teammate who wants to know what the BuildConfig to Shipwright migration tool can do today and what it still cannot, without opening Jira. And me, planning Phase 4 from the same list, so the two views cannot drift apart.</p>
   </div>
 </section>
 
 <section id="summary">
   <h2>In short</h2>
   <p>The tool is a crane transform plugin. It reads a namespace export from disk and turns every BuildConfig into a Shipwright Build, offline, with each dropped field recorded on the object.@@R_README@@ Four of its seven layers are shipped in full: convert, tell the truth, safe to re-run, and build it faster. Carry the environment and prove it are partly done. Explain it is seven open pull requests plus four stories nobody has started.@@R_PRS@@</p>
-  <p>The five epics hold @@N_ALL@@ stories. @@N_DONE@@ are done, @@N_DESC@@ were closed without work, and @@N_OPENALL@@ are open, of which @@N_REV@@ sit in review.@@R_EPICS@@</p>
+  <p>The five epics hold @@N_ALL@@ stories. @@N_DONE@@ are done. We closed @@N_DESC@@ without building them, and @@N_OPENALL@@ are open, @@N_REV@@ of those in review.@@R_EPICS@@</p>
   <div class="callout">
-    <p>Four things the epic view hides. Three S2I options are Done in Jira, but the plugin still drops them. The parameter contract between the plugin and the operator has no automated guard. Triggers are preserved, never migrated. Test infrastructure has no Jira footprint at all.</p>
+    <p>Four things the epic view hides. Three S2I options are Done in Jira, and the plugin still drops them. That one bites a customer with custom S2I scripts on day one. Nothing guards the parameter contract between the plugin and the operator. The plugin preserves triggers but cannot migrate them. And the test infrastructure has no Jira footprint at all.</p>
   </div>
-  <p>The open engineering work sits in one layer. The ServiceAccount and its RBAC, the trusted CA volume, and chained builds are the engineering stories left. Everything else open is documentation.@@R_P4@@</p>
+  <p>What is left to build sits in one layer. The ServiceAccount and its RBAC, the trusted CA volume, and chained builds are the engineering stories left. Everything else open is documentation.@@R_P4@@</p>
 </section>
 
 <section id="s1">
   <h2>1. What the tool does</h2>
-  <p>crane exports a namespace from the source cluster to disk.@@R_CRANE@@ The plugin runs once per exported object. For each BuildConfig it marks the original for deletion and emits a Shipwright Build, plus a ServiceAccount, a ConfigMap or a BuildRun template when the BuildConfig needs one.@@R_README@@ It never contacts a cluster. ImageStream references resolve through two mapping flags, with a warned fallback to the internal registry URL.@@R_README@@</p>
+  <p>crane exports a namespace from the source cluster to disk.@@R_CRANE@@ The plugin runs once per exported object. For each BuildConfig it marks the original for deletion and emits a Shipwright Build, plus a ServiceAccount, a ConfigMap or a BuildRun template when the BuildConfig needs one.@@R_README@@ It never contacts a cluster. ImageStream references resolve through two mapping flags. When no flag matches, the plugin falls back to the internal registry URL and says so in a warning.@@R_README@@</p>
   @@FIG1@@
-  <p>Every field the plugin drops or changes lands as a warning in an annotation on the Build. Each BuildConfig ends in one of four recorded outcomes: converted, converted with warnings, skipped, or failed. Custom and JenkinsPipeline strategies are skipped with a reason. One BuildConfig that cannot convert never aborts the run.@@R_ARCH@@ The enhancement proposal that started this work described a different shape, a live <code>crane convert</code> against the cluster.@@R_ENH@@</p>
+  <p>Every field the plugin drops or changes lands as a warning in an annotation on the Build. Each BuildConfig ends in one of four recorded outcomes: converted, converted with warnings, skipped, or failed. The plugin skips Custom and JenkinsPipeline strategies and records why. One BuildConfig that cannot convert never aborts the run.@@R_ARCH@@ The enhancement proposal that started this work described a different shape, a live <code>crane convert</code> against the cluster. The offline plugin replaced it.@@R_ENH@@</p>
 </section>
 
 <section id="s2">
@@ -418,11 +421,11 @@ TEMPLATE = """<!doctype html>
 
 <section id="s4">
   <h2>4. Story map</h2>
-  <p>Every story in the five epics, with the feature it serves. Type is the author's classification. Status is the Jira status on @@SNAPSHOT@@, the resolution for a closed story, and the pull request where one exists.@@R_EPICS@@</p>
+  <p>Every story in the five epics, with the feature it serves. Type is my classification. Status is the Jira status on @@SNAPSHOT@@, the resolution for a closed story, and the pull request where one exists.@@R_EPICS@@</p>
   @@FILTERS@@
   @@STORIES@@
   <h3>Stories per feature</h3>
-  <p>The four enhancement epics only, @@N_ENH@@ stories. Tech Preview stories are left out because they predate the feature split.</p>
+  <p>The four enhancement epics only, @@N_ENH@@ stories. I left the Tech Preview stories out because they predate the feature split.</p>
   @@TALLY@@
 </section>
 
@@ -446,11 +449,11 @@ TEMPLATE = """<!doctype html>
 <section id="s6">
   <h2>6. Gaps the epic view hides</h2>
   <ol>
-    <li><b>Three S2I options are Done in Jira and dropped by the plugin.</b> BUILD-1606, 1607 and 1641 shipped their params, <code>pull-policy</code>, <code>incremental</code> and <code>scripts-url</code>, through strategy-catalog and the operator sync.@@R_2323@@@@R_OP1402@@@@R_S2I@@ The plugin repo was seeded before the matching converter change and still drops all three with an RFE warning.@@R_CONV@@ A re-port story under F4 is missing.</li>
-    <li><b>The parameter contract has no automated guard.</b> The plugin emits param names the shipped strategies must declare. The validation story and the cross-repo golden test were both closed Won't Do, so cluster E2E and review are the only check.@@R_2317@@@@R_2328@@</li>
-    <li><b>Triggers are preserved, never migrated.</b> The plugin keeps the original triggers in an annotation and warns per type, and no trigger type fires after migration because nothing on a Builds for Red Hat OpenShift cluster reads them.@@R_TRIG@@ The runbook that tells a user how to fire builds again is not written.@@R_2393@@</li>
-    <li><b>Test infrastructure has no Jira footprint.</b> CI, the transform E2E and the Minikube cluster E2E came through pull requests. The one Jira story in this area, the CI merge gate, was closed Won't Do.@@R_PR4@@@@R_PR63@@</li>
-    <li><b>Three stories closed without code, by design.</b> Dry-run was declared unnecessary because the transform step never touches a cluster.@@R_2337@@ Secret migration was declared covered because crane export already carries user secrets.@@R_2038@@ The destination pre-flight check was descoped with the offline design.</li>
+    <li><b>Three S2I options are Done in Jira and dropped by the plugin.</b> BUILD-1606, 1607 and 1641 shipped their params, <code>pull-policy</code>, <code>incremental</code> and <code>scripts-url</code>, through strategy-catalog and the operator sync.@@R_2323@@@@R_OP1402@@@@R_S2I@@ The plugin repo started from a snapshot taken before the matching converter change, so it still drops all three with an RFE warning.@@R_CONV@@ Nobody has filed the re-port story under F4.</li>
+    <li><b>The parameter contract has no automated guard.</b> The plugin emits param names the shipped strategies must declare. We closed both the validation story and the cross-repo golden test as Won't Do, so cluster E2E and review are the only check.@@R_2317@@@@R_2328@@</li>
+    <li><b>Triggers are preserved, never migrated.</b> The plugin keeps the original triggers in an annotation and warns per type, and no trigger type fires after migration because nothing on a Builds for Red Hat OpenShift cluster reads them.@@R_TRIG@@ Nobody has written the runbook that tells a user how to fire builds again.@@R_2393@@</li>
+    <li><b>Test infrastructure has no Jira footprint.</b> CI, the transform E2E and the Minikube cluster E2E came through pull requests. The one Jira story in this area, the CI merge gate, we closed as Won't Do.@@R_PR4@@@@R_PR63@@</li>
+    <li><b>Three stories closed without code, on purpose.</b> We dropped dry-run because the transform step never touches a cluster.@@R_2337@@ We dropped secret migration because crane export already carries user secrets.@@R_2038@@ The destination pre-flight check went out with the offline design.</li>
   </ol>
 </section>
 
@@ -467,7 +470,7 @@ TEMPLATE = """<!doctype html>
   </ul>
   <h3>Documentation</h3>
   <ul>
-    <li>Seven pull requests in review: architecture (#64), support matrix (#65), three worked examples (#66 to #68), README rewrite (#69), decision records (#70).@@R_ARCH@@@@R_MATRIX@@</li>
+    <li>Seven pull requests in review: the architecture page in #64, the support matrix in #65, three worked examples in #66 to #68, the README rewrite in #69, the decision records in #70.@@R_ARCH@@@@R_MATRIX@@</li>
     <li>@@J2341@@ docs pack, @@J2393@@ trigger runbook, @@J1764@@ crane help text. Not started.</li>
     <li>@@J1950@@ blog post on RHEL entitled builds. Backlog.</li>
   </ul>
