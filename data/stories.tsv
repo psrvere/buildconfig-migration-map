@@ -95,3 +95,4 @@ BUILD-2436	P4	F11	Documentation	Review		README rewrite: correct the four false c
 BUILD-2437	P4	F11	Documentation	Review		Architecture decision records for the migration plugin (docs/adr/, eight records and an index)	70		
 BUILD-2438	P4	F9	Improvement	New		Name-collision warnings W2 and W3 cannot fire from the plugin: remove the dead branch or mark it library-only			
 BUILD-2439	P4	F5	Improvement	New		Quote the three names in the named-ServiceAccount pull-secret warning's oc command			
+BUILD-2459	P4	F4	Bug	New		Plugin drops S2I scripts, incremental and forcePull although the shipped strategy accepts them			port of the crane-lib mapping for BUILD-1606, 1607 and 1641, 1 point

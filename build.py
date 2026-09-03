@@ -395,7 +395,7 @@ TEMPLATE = """<!doctype html>
   <p>The tool is a crane transform plugin. It reads a namespace export from disk and turns every BuildConfig into a Shipwright Build, offline, with each dropped field recorded on the object.@@R_README@@ Four of its seven layers are shipped in full: convert, tell the truth, safe to re-run, and build it faster. Carry the environment and prove it are partly done. Explain it is seven open pull requests plus four stories nobody has started.@@R_PRS@@</p>
   <p>The five epics hold @@N_ALL@@ stories. @@N_DONE@@ are done. We closed @@N_DESC@@ without building them, and @@N_OPENALL@@ are open, @@N_REV@@ of those in review.@@R_EPICS@@</p>
   <div class="callout">
-    <p>Four things the epic view hides. Three S2I options are Done in Jira, and the plugin still drops them. That one bites a customer with custom S2I scripts on day one. Nothing guards the parameter contract between the plugin and the operator. The plugin preserves triggers but cannot migrate them. And the test infrastructure has no Jira footprint at all.</p>
+    <p>Four things the epic view hides. Three S2I options are Done in Jira, and the plugin still drops them. That one bites a customer with custom S2I scripts on day one, and is now @@J2459@@. Nothing guards the parameter contract between the plugin and the operator. The plugin preserves triggers but cannot migrate them. And the test infrastructure has no Jira footprint at all.</p>
   </div>
   <p>What is left to build sits in one layer. The ServiceAccount and its RBAC, the trusted CA volume, and chained builds are the engineering stories left. Everything else open is documentation.@@R_P4@@</p>
 </section>
@@ -450,7 +450,7 @@ TEMPLATE = """<!doctype html>
 <section id="s6">
   <h2>6. Gaps the epic view hides</h2>
   <ol>
-    <li><b>Three S2I options are Done in Jira and dropped by the plugin.</b> BUILD-1606, 1607 and 1641 added <code>pull-policy</code>, <code>incremental</code> and <code>scripts-url</code> to the source-to-image strategy in strategy-catalog on 2026-08-04 to 08-06, and the operator bundle is a byte-identical copy of that catalog since PR #1402 on 2026-08-14.@@R_2323@@@@R_OP1402@@@@R_S2I@@ The matching converter change went into crane-lib on 2026-08-06, but the plugin repo was seeded a week later from an older copy of the converter, so it still drops all three fields with a warning that points at a closed RFE.@@R_CONV@@ Nobody has filed the re-port story under F4.</li>
+    <li><b>Three S2I options are Done in Jira and dropped by the plugin.</b> BUILD-1606, 1607 and 1641 added <code>pull-policy</code>, <code>incremental</code> and <code>scripts-url</code> to the source-to-image strategy in strategy-catalog on 2026-08-04 to 08-06, and the operator bundle is a byte-identical copy of that catalog since PR #1402 on 2026-08-14.@@R_2323@@@@R_OP1402@@@@R_S2I@@ The matching converter change went into crane-lib on 2026-08-06, but the plugin repo was seeded a week later from an older copy of the converter, so it still drops all three fields with a warning that points at a closed RFE.@@R_CONV@@ The port is @@J2459@@, one point, filed 2026-09-03.</li>
     <li><b>The parameter contract has no automated guard.</b> The plugin emits param names the shipped strategies must declare. We closed both the validation story and the cross-repo golden test as Won't Do, so cluster E2E and review are the only check.@@R_2317@@@@R_2328@@</li>
     <li><b>Triggers are preserved, never migrated.</b> The plugin keeps the original triggers in an annotation and warns per type, and no trigger type fires after migration because nothing on a Builds for Red Hat OpenShift cluster reads them.@@R_TRIG@@ Nobody has written the runbook that tells a user how to fire builds again.@@R_2393@@</li>
     <li><b>Test infrastructure has no Jira footprint.</b> CI, the transform E2E and the Minikube cluster E2E came through pull requests. The one Jira story in this area, the CI merge gate, we closed as Won't Do.@@R_PR4@@@@R_PR63@@</li>
@@ -466,7 +466,7 @@ TEMPLATE = """<!doctype html>
     <li>@@J2265@@ mountTrustedCA to the trusted-ca volume override, PR #23 in review, paired with @@J2342@@ for the operator and strategy-catalog side.@@R_PR23@@</li>
     <li>@@J2326@@ symbolic image references and run ordering for chained BuildConfigs. Not started.@@R_2326@@</li>
     <li>@@J2334@@ crane consumes the Shipwright omitempty change. Waiting on Shipwright v0.21.0.@@R_2334@@</li>
-    <li>The S2I re-port from gap 1 above. No story yet.</li>
+    <li>@@J2459@@ port the three S2I mappings from crane-lib and retire the three RFE warnings. Not started, one point.</li>
     <li>@@J2438@@ and @@J2439@@, two small cleanups in the warnings.</li>
   </ul>
   <h3>Documentation</h3>
@@ -520,7 +520,7 @@ page = (TEMPLATE
         .replace("@@R_PR23@@", ref("src-pr23")).replace("@@R_2402@@", ref("src-2402"))
         .replace("@@R_2326@@", ref("src-2326")).replace("@@R_2334@@", ref("src-2334"))
         .replace("@@R_2315@@", ref("src-2315")))
-for key in ["2402", "2265", "2342", "2326", "2334", "2438", "2439", "2341", "2393", "1764", "1950", "2315"]:
+for key in ["2402", "2265", "2342", "2326", "2334", "2438", "2439", "2341", "2393", "1764", "1950", "2315", "2459"]:
     page = page.replace(f"@@J{key}@@", jira(f"BUILD-{key}"))
 
 page, items = number_sources(page)
