@@ -76,7 +76,7 @@ BUILD-2266	P4	F11	Documentation	Closed	Done	Add BuildConfig → Shipwright field
 BUILD-2315	P4	F5	Bug	Review		Stop emitting a ServiceAccount that overwrites a migrated one when a BuildConfig names its own SA	55	PR merged 2026-08-25, Jira still open	2	no ServiceAccount overwrite
 BUILD-2326	P4	F2	Feature	New		Preserve symbolic image refs and express run-ordering for chained BuildConfig conversions			3	chained BuildConfig ordering
 BUILD-2334	P4	F14	Improvement	Waiting		Crane: consume Shipwright omitempty (version bump + null-field cleanup redesign)		waits on Shipwright v0.21.0	1	crane consumes the omitempty change
-BUILD-2341	P4	F11	Documentation	New		Migration docs pack		binary and Custom-strategy parts landed in the support matrix	2	migration docs pack
+BUILD-2341	P4	F11	Documentation	Closed	Duplicate	Migration docs pack		binary and Custom guidance landed with BUILD-2432, the exposeDockerSocket line moved to BUILD-2459, metrics and quota belong to product docs	2	migration docs pack
 BUILD-2342	P4	F5	Feature	Review		Trusted-CA overridable volume in shipped buildah/s2i strategies		operator and strategy-catalog side	2	trusted-ca volume in the shipped strategies
 BUILD-2393	P4	F8	Documentation	New		Runbook: how to trigger builds after migration (per BuildConfig trigger type)			2	runbook for triggering after migration
 BUILD-2395	P4	F12	Chore	Closed	Done	Add the tech-design and setup-repos skills to the migration plugin repo	27		2	

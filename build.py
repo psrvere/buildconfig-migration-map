@@ -550,7 +550,7 @@ TEMPLATE = """<!doctype html>
   <h3>Documentation</h3>
   <ul>
     <li>The documentation series merged on 2026-09-03: the architecture page, the support matrix, three worked examples, the README rewrite, eight decision records, and the agent rules in AGENTS.md.@@R_ARCH@@@@R_MATRIX@@</li>
-    <li>@@J2341@@ docs pack, @@J2393@@ trigger runbook, @@J1764@@ crane help text. Not started.</li>
+    <li>@@J2393@@ trigger runbook and @@J1764@@ crane help text. Not started. The docs pack, @@J2341@@, closed today as a duplicate of the support matrix.</li>
     <li>@@J1950@@ blog post on RHEL entitled builds. Backlog.</li>
   </ul>
   <h3>Housekeeping</h3>
