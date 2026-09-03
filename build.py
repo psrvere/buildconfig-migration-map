@@ -214,7 +214,7 @@ def features_table():
     rows = []
     for f in features:
         n, pts, blank = feature_stats(f["id"])
-        cell = f'{n} stories · {pts} pts'
+        cell = f'{n} {"story" if n == 1 else "stories"} · {pts} {"pt" if pts == 1 else "pts"}'
         if blank:
             cell += f'<div class="src">{blank} unpointed</div>'
         items = "".join(f"<li>{e(t.strip())}</li>" for t in f["outcome"].split("|") if t.strip())
