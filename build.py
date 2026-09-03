@@ -28,17 +28,40 @@ DESCOPED = {"Won't Do", "Obsolete", "Duplicate", "Cannot Reproduce"}
 
 
 def state(s):
-    if s["resolution"] in DESCOPED:
-        return "descoped"
-    if s["resolution"] == "Done":
-        return "done"
-    if s["status"] == "Review":
-        return "review"
+    """Story state from the Jira status and resolution."""
+    if s["status"] == "Closed":
+        return "done" if s["resolution"] == "Done" else "notdone"
+    if s["status"] in ("Review", "In Progress", "Waiting"):
+        return "active"
     return "open"
 
 
-STATE_TAG = {"done": ("ok", "done"), "review": ("warn", "review"),
-             "open": ("acc", "open"), "descoped": ("off", "descoped")}
+STATE_CLASS = {"done": "ok", "notdone": "off", "active": "warn", "open": "acc"}
+STATE_LABEL = {"done": "Closed · Done", "notdone": "Closed · not done", "active": "Review or Waiting", "open": "New or Backlog"}
+FEATURE_CLASS = {"shipped": "ok", "in progress": "warn", "todo": "acc", "refinement": "off"}
+
+
+def feature_status(f):
+    """shipped: nothing open. in progress: a story in Review, In Progress or Waiting, or an open PR.
+    todo: open stories, none started. refinement: nothing shipped and nothing planned."""
+    if f["status_override"]:
+        return f["status_override"]
+    states = {state(x) for x in stories if x["feature"] == f["id"]}
+    if "active" in states:
+        return "in progress"
+    if "open" in states:
+        return "todo"
+    if "done" in states:
+        return "shipped"
+    return "refinement"
+
+
+def story_tag(s):
+    st = state(s)
+    label = s["status"]
+    if s["status"] == "Closed" and s["resolution"]:
+        label += " · " + s["resolution"]
+    return f'<span class="tag {STATE_CLASS[st]}">{e(label)}</span>'
 PHASE_NAME = {"TP": "Tech Preview", "P1": "Phase 1", "P2": "Phase 2",
               "P3": "Phase 3", "P4": "Phase 4"}
 PHASE_EPIC = {"TP": "BUILD-1334", "P1": "BUILD-1848", "P2": "BUILD-1655",
@@ -160,6 +183,13 @@ def fig_pipeline():
 </figure>'''
 
 
+def status_counts():
+    c = {"shipped": 0, "in progress": 0, "todo": 0, "refinement": 0}
+    for f in features:
+        c[feature_status(f)] += 1
+    return c
+
+
 def fig_layers():
     by_layer = {}
     for f in features:
@@ -178,8 +208,9 @@ def fig_layers():
             line, col = divmod(j, per_line)
             x = m + col * (bw + gap)
             yy = by + line * (bh + gap)
-            parts.append(f'<rect class="box {f["status_class"]}" x="{x}" y="{yy}" width="{bw}" height="{bh}" rx="5"/>')
-            parts.append(f'<text class="t {f["status_class"]}" x="{x + 12}" y="{yy + 24}" style="font-size:18px">{e(f["id"])}</text>')
+            fc = FEATURE_CLASS[feature_status(f)]
+            parts.append(f'<rect class="box {fc}" x="{x}" y="{yy}" width="{bw}" height="{bh}" rx="5"/>')
+            parts.append(f'<text class="t {fc}" x="{x + 12}" y="{yy + 24}" style="font-size:18px">{e(f["id"])}</text>')
             parts.append(f'<text class="s" x="{x + 12}" y="{yy + 45}" style="font-size:15px">{e(f["short"])}</text>')
         lines = (len(fs) + per_line - 1) // per_line
         y = by + lines * (bh + gap) - gap + 18
@@ -187,16 +218,18 @@ def fig_layers():
             parts.append(f'<line x1="{m}" y1="{y}" x2="{width - m}" y2="{y}" stroke="var(--line)" stroke-width="1"/>')
             y += 18
     height = y + 4
+    counts = status_counts()
+    ARIA_COUNTS = f'{counts["shipped"]} shipped, {counts["in progress"]} in progress, {counts["todo"]} todo, {counts["refinement"]} in refinement.'
     return f'''<figure>
   <div class="figwrap">
-    <svg viewBox="0 0 {width} {height}" role="img" aria-label="Seven layers, each holding its features as boxes coloured by status. Convert holds six features, five shipped and S2I parity a gap. Carry the environment holds credentials and volumes, partly done, and pre-flight checks, descoped. Tell the truth holds outcome and warnings, shipped, and triggers, partly. Safe to re-run is shipped. Prove it is partly done. Explain it is in review. Build it faster holds the engineering workflow, shipped, and upstream alignment, partly.">{"".join(parts)}</svg>
+    <svg viewBox="0 0 {width} {height}" role="img" aria-label="Seven layers, each holding its features as boxes coloured by status. Green is shipped, amber is in progress, blue is todo, grey dashed is refinement. {ARIA_COUNTS}">{"".join(parts)}</svg>
   </div>
   <figcaption><b>Figure 2. The feature map.</b> Fifteen features in seven layers. A layer is a question a reader asks in order: does it convert, does the Build have what it needs on the target, does the tool admit what it lost, can it run twice, is it proven, is it explained, can the team build it fast. Colour is the status on {SNAPSHOT}. I set it from the story map in section 4 and the code on main.{ref("src-epic-p4", "src-readme")}</figcaption>
   <div class="legend">
     <span class="l-ok">shipped</span>
-    <span class="l-warn">partly shipped or in review</span>
-    <span class="l-bad">gap</span>
-    <span class="l-off">descoped</span>
+    <span class="l-warn">in progress</span>
+    <span class="l-acc">todo</span>
+    <span class="l-off">refinement</span>
   </div>
 </figure>'''
 
@@ -218,8 +251,9 @@ def features_table():
         if blank:
             cell += f'<div class="src">{blank} unpointed</div>'
         items = "".join(f"<li>{e(t.strip())}</li>" for t in f["outcome"].split("|") if t.strip())
+        fs = feature_status(f)
         rows.append(f'<tr><td class="k">{e(f["id"])} {e(f["name"])}</td><td><ul class="cell">{items}</ul></td>'
-                    f'<td><span class="tag {f["status_class"]}">{e(f["status_text"])}</span>'
+                    f'<td><span class="tag {FEATURE_CLASS[fs]}">{e(fs)}</span>'
                     + (f'<div class="src">{e(f["status_note"])}</div>' if f["status_note"] else "") + f'</td><td class="num">{cell}</td></tr>')
     return ('<div class="tablewrap"><table><thead><tr><th>Feature</th><th>What the user gets</th><th>Status</th><th class="num">Stories · points</th></tr></thead>'
             f'<tbody>{"".join(rows)}</tbody></table></div>')
@@ -228,7 +262,7 @@ def features_table():
 def phase_table():
     counts = {}
     for s in stories:
-        c = counts.setdefault(s["phase"], {"n": 0, "done": 0, "descoped": 0, "review": 0, "open": 0})
+        c = counts.setdefault(s["phase"], {"n": 0, "done": 0, "notdone": 0, "active": 0, "open": 0})
         c["n"] += 1
         c[state(s)] += 1
     meta = {
@@ -243,10 +277,10 @@ def phase_table():
         c = counts[p]
         st, what, src = meta[p]
         detail = f'{c["n"]} stories: {c["done"]} done'
-        if c["descoped"]:
-            detail += f', {c["descoped"]} descoped'
-        if c["review"]:
-            detail += f', {c["review"]} in review'
+        if c["notdone"]:
+            detail += f', {c["notdone"]} closed without work'
+        if c["active"]:
+            detail += f', {c["active"]} in review or waiting'
         if c["open"]:
             detail += f', {c["open"]} not started'
         rows.append(f'<tr><td class="k">{PHASE_NAME[p]}</td><td>{jira(PHASE_EPIC[p])}</td><td>{st}</td><td>{detail}</td><td>{e(what)}{ref(src)}</td></tr>')
@@ -258,19 +292,9 @@ def story_table():
     rows = []
     for s in stories:
         st = state(s)
-        cls, label = STATE_TAG[st]
-        if s["gap"] == "1":
-            cls, label = "bad", "done in Jira, gap in plugin"
-        detail = []
-        if s["resolution"] and s["resolution"] != "Done":
-            detail.append(e(s["resolution"]))
-        if st == "open":
-            detail.append(e(s["status"]))
+        line = story_tag(s)
         if s["prs"]:
-            detail.append(pr_links(s["prs"]))
-        line = f'<span class="tag {cls}">{label}</span>'
-        if detail:
-            line += " " + " · ".join(detail)
+            line += " " + pr_links(s["prs"])
         if s["note"]:
             line += f'<div class="src">{e(s["note"])}</div>'
         f = fmap[s["feature"]]
@@ -287,12 +311,12 @@ def filter_bar():
         return "".join(f'<option value="{e(v)}">{e(labels[v] if labels else v)}</option>' for v in values)
     phases = ["TP", "P1", "P2", "P3", "P4"]
     types = sorted({s["type"] for s in stories})
-    states = ["done", "review", "open", "descoped"]
+    states = ["done", "active", "open", "notdone"]
     return f'''<div class="filters" role="group" aria-label="Filter the story map">
   <label>Phase <select id="f-phase" data-key="phase"><option value="">all</option>{opts(phases, PHASE_NAME)}</select></label>
   <label>Feature <select id="f-feature" data-key="feature"><option value="">all</option>{opts([f["id"] for f in features], {f["id"]: f["id"] + " " + f["short"] for f in features})}</select></label>
   <label>Type <select id="f-type" data-key="type"><option value="">all</option>{opts(types)}</select></label>
-  <label>State <select id="f-state" data-key="state"><option value="">all</option>{opts(states)}</select></label>
+  <label>Status <select id="f-state" data-key="state"><option value="">all</option>{opts(states, STATE_LABEL)}</select></label>
   <button type="button" id="f-reset">reset</button>
   <span id="f-count" class="muted"></span>
 </div>'''
@@ -300,30 +324,31 @@ def filter_bar():
 
 def tally_table():
     rows = []
-    tot = {"n": 0, "pts": 0, "done": 0, "descoped": 0, "review": 0, "open": 0}
+    tot = {"n": 0, "pts": 0, "done": 0, "notdone": 0, "active": 0, "open": 0}
     for f in features:
         ss = [s for s in stories if s["feature"] == f["id"]]
         n, pts, blank = feature_stats(f["id"])
-        c = {"done": 0, "descoped": 0, "review": 0, "open": 0}
+        c = {"done": 0, "notdone": 0, "active": 0, "open": 0}
         for s in ss:
             c[state(s)] += 1
         for k in c:
             tot[k] += c[k]
         tot["n"] += n; tot["pts"] += pts
         rows.append(f'<tr><td class="k">{e(f["id"])} {e(f["short"])}</td><td class="num">{n}</td><td class="num">{pts}</td><td class="num">{c["done"]}</td>'
-                    f'<td class="num">{c["descoped"]}</td><td class="num">{c["review"]}</td><td class="num">{c["open"]}</td></tr>')
+                    f'<td class="num">{c["notdone"]}</td><td class="num">{c["active"]}</td><td class="num">{c["open"]}</td></tr>')
     rows.append(f'<tr><td class="k">All features</td><td class="num">{tot["n"]}</td><td class="num">{tot["pts"]}</td><td class="num">{tot["done"]}</td>'
-                f'<td class="num">{tot["descoped"]}</td><td class="num">{tot["review"]}</td><td class="num">{tot["open"]}</td></tr>')
-    return ('<div class="tablewrap compact"><table><thead><tr><th>Feature</th><th class="num">Stories</th><th class="num">Points</th><th class="num">Done</th><th class="num">Descoped</th><th class="num">In review</th><th class="num">Not started</th></tr></thead>'
+                f'<td class="num">{tot["notdone"]}</td><td class="num">{tot["active"]}</td><td class="num">{tot["open"]}</td></tr>')
+    return ('<div class="tablewrap compact"><table><thead><tr><th>Feature</th><th class="num">Stories</th><th class="num">Points</th><th class="num">Done</th><th class="num">Closed, not done</th><th class="num">Review or waiting</th><th class="num">Not started</th></tr></thead>'
             f'<tbody>{"".join(rows)}</tbody></table></div>')
 
 
 # ---------------------------------------------------------------- numbers
 n_all = len(stories)
 n_done = sum(1 for s in stories if state(s) == "done")
-n_desc = sum(1 for s in stories if state(s) == "descoped")
-n_rev = sum(1 for s in stories if state(s) == "review")
+n_desc = sum(1 for s in stories if state(s) == "notdone")
+n_rev = sum(1 for s in stories if state(s) == "active")
 n_open = sum(1 for s in stories if state(s) == "open")
+fc = status_counts()
 n_enh = sum(1 for s in stories if s["phase"] != "TP")
 
 EXTRA_CSS = """
@@ -336,6 +361,7 @@ EXTRA_CSS = """
 tr[hidden] { display: none; }
 ul.cell { margin: 0; padding-left: 1.1rem; max-width: none; }
 ul.cell li { margin: 0.15rem 0; }
+.legend .l-acc::before { background: var(--accent-soft); border-color: var(--accent); }
 .hero .note { margin-top: 1rem; }
 """
 
@@ -397,7 +423,7 @@ TEMPLATE = """<!doctype html>
     <div class="fact"><div class="v">15</div><div class="k">features in 7 layers</div></div>
     <div class="fact"><div class="v">@@N_ALL@@</div><div class="k">stories in 5 epics</div></div>
     <div class="fact"><div class="v">@@N_DONE@@</div><div class="k">done</div></div>
-    <div class="fact"><div class="v">@@N_OPENALL@@</div><div class="k">open, @@N_REV@@ of them in review</div></div>
+    <div class="fact"><div class="v">@@N_OPENALL@@</div><div class="k">open, @@N_REV@@ of them in review or waiting</div></div>
   </div>
   <p class="note">Jira and GitHub as of @@SNAPSHOT@@. The feature ids, the layers and the story types are mine, not Jira fields. <code>build.py</code> generates this page from <code>data/*.tsv</code>.</p>
 </header>
@@ -411,8 +437,8 @@ TEMPLATE = """<!doctype html>
 
 <section id="summary">
   <h2>In short</h2>
-  <p>The tool is a crane transform plugin. It reads a namespace export from disk and turns every BuildConfig into a Shipwright Build, offline, with each dropped field recorded on the object.@@R_README@@ Four of its seven layers are shipped in full: convert, tell the truth, safe to re-run, and build it faster. Carry the environment and prove it are partly done. Explain it is seven open pull requests plus four stories nobody has started.@@R_PRS@@</p>
-  <p>The five epics hold @@N_ALL@@ stories. @@N_DONE@@ are done. We closed @@N_DESC@@ without building them, and @@N_OPENALL@@ are open, @@N_REV@@ of those in review.@@R_EPICS@@</p>
+  <p>The tool is a crane transform plugin. It reads a namespace export from disk and turns every BuildConfig into a Shipwright Build, offline, with each dropped field recorded on the object.@@R_README@@ Of the fifteen features, @@N_SHIPPED@@ are shipped with nothing open, @@N_INPROG@@ are in progress, @@N_TODO@@ have work filed but not started, and @@N_REFINE@@ is in refinement.@@R_PRS@@</p>
+  <p>The five epics hold @@N_ALL@@ stories. @@N_DONE@@ are done. We closed @@N_DESC@@ without building them, and @@N_OPENALL@@ are open, @@N_REV@@ of those in review or waiting.@@R_EPICS@@</p>
   <div class="callout">
     <p>Four things the epic view hides. Three S2I options are Done in Jira, and the plugin still drops them. That one bites a customer with custom S2I scripts on day one, and is now @@J2459@@. Nothing guards the parameter contract between the plugin and the operator. The plugin preserves triggers but cannot migrate them. And the test infrastructure has no Jira footprint at all.</p>
   </div>
@@ -428,7 +454,7 @@ TEMPLATE = """<!doctype html>
 
 <section id="s2">
   <h2>2. The feature map</h2>
-  <p>Fifteen features, grouped into seven layers. The layers are the questions a reader asks in order, and the colour is where each feature stands today.</p>
+  <p>Fifteen features, grouped into seven layers. The layers are the questions a reader asks in order, and the colour is where each feature stands today. Status follows the stories. Shipped means nothing is open. In progress means a story sits in Review, In Progress or Waiting, or a pull request is open. Todo means work is filed and nobody has started it. Refinement means nothing shipped and nothing is planned.</p>
   @@FIG2@@
   @@FEATURES@@
 </section>
@@ -445,7 +471,7 @@ TEMPLATE = """<!doctype html>
   @@FILTERS@@
   @@STORIES@@
   <h3>Stories per feature</h3>
-  <p>All five epics. Points are Jira story points on @@SNAPSHOT@@; a story with no estimate counts as zero and is flagged in the feature table above.</p>
+  <p>All five epics. Points are Jira story points on @@SNAPSHOT@@. A story with no estimate counts as zero and is flagged in the feature table above.</p>
   @@TALLY@@
 </section>
 
@@ -520,6 +546,8 @@ page = (TEMPLATE
         .replace("@@N_ALL@@", str(n_all)).replace("@@N_DONE@@", str(n_done))
         .replace("@@N_DESC@@", str(n_desc)).replace("@@N_REV@@", str(n_rev))
         .replace("@@N_OPENALL@@", str(n_rev + n_open)).replace("@@N_ENH@@", str(n_enh))
+        .replace("@@N_SHIPPED@@", str(fc["shipped"])).replace("@@N_INPROG@@", str(fc["in progress"]))
+        .replace("@@N_TODO@@", str(fc["todo"])).replace("@@N_REFINE@@", str(fc["refinement"]))
         .replace("@@FIG1@@", fig_pipeline()).replace("@@FIG2@@", fig_layers())
         .replace("@@FEATURES@@", features_table()).replace("@@PHASES@@", phase_table())
         .replace("@@FILTERS@@", filter_bar()).replace("@@STORIES@@", story_table())

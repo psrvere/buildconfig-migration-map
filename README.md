@@ -18,8 +18,8 @@ python3 build.py      # writes index.html from data/*.tsv
 
 | File | What it holds |
 |---|---|
-| `data/stories.tsv` | one row per story: key, phase, feature, type, Jira status and resolution, title, PR numbers, gap flag, note |
-| `data/features.tsv` | the fifteen features: id, short name, name, layer, what the user gets as pipe-separated bullets, status class (`ok`, `warn`, `bad`, `off`), one of five status labels, an optional note under the label |
+| `data/stories.tsv` | one row per story: key, phase, feature, type, Jira status and resolution, title, PR numbers, note, story points |
+| `data/features.tsv` | the fifteen features: id, short name, name, layer, what the user gets as pipe-separated bullets, an optional status override, an optional note under the status |
 | `data/layers.tsv` | the seven layers the features sit in |
 | `build.py` | the prose sections, the two SVG figures, the sources list, and the story-table filters |
 | `assets/base.css` | the shared dark stylesheet from the create-html skill, inlined at build time |
@@ -31,9 +31,12 @@ when you refresh the Jira statuses.
 ## Conventions
 
 - Feature ids F1 to F15 are stable. Add a feature at the end, never renumber.
-- A story's state is derived: `Done` is done, `Won't Do`, `Obsolete`,
-  `Duplicate` and `Cannot Reproduce` are descoped, `Review` is in review,
-  anything else is open. Set `gap` to `1` for a story that is Done in Jira but
-  not shipped in the plugin.
+- A story's state comes from Jira: `Closed` with resolution `Done` is done,
+  `Closed` with any other resolution is closed without work, `Review`,
+  `In Progress` and `Waiting` are active, anything else is open.
+- A feature's status is derived from its stories. Shipped: nothing open.
+  In progress: an active story, or an open PR (set `status_override` for
+  PR-only work). Todo: open stories, none started. Refinement: nothing
+  shipped and nothing planned.
 - Prose follows the create-html writing rules: no em dashes, one idea per
   sentence, every factual claim cites a source in the list at the end.
